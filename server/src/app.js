@@ -5,11 +5,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/auth', require('./routes/auth.routes'));
+app.use('/dashboard', require('./routes/dashboard.routes'));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
 app.use(require('./middleware/error.middleware'));
+
 
 module.exports = app;
