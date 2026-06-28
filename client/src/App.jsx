@@ -12,6 +12,8 @@ import ManageRooms from './pages/admin/ManageRooms';
 import ManageBookings from './pages/warden/ManageBookings';
 import MessBills from './pages/student/MessBills';
 import ManageMessBills from './pages/admin/ManageMessBills';
+import GatePass from './pages/student/GatePass';
+import ApproveGatePass from './pages/admin/ApproveGatePass';
 
 
 
@@ -55,6 +57,12 @@ function App() {
           } />
           <Route path="/admin/manage-bills" element={
             <ProtectedRoute allowedRoles={['admin', 'warden']}><ManageMessBills /></ProtectedRoute>
+          } />
+          <Route path="/student/gate-pass" element={
+            <ProtectedRoute allowedRoles={['student']}><GatePass /></ProtectedRoute>
+          } />
+          <Route path="/warden/gate-passes" element={
+            <ProtectedRoute allowedRoles={['warden', 'admin']}><ApproveGatePass /></ProtectedRoute>
           } />
 
 
