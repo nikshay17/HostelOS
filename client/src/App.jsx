@@ -7,6 +7,9 @@ import StudentDashboard from './pages/student/StudentDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import WardenDashboard from './pages/warden/WardenDashboard';
 import CreateStaff from './pages/admin/CreateStaff';
+import RoomBooking from './pages/student/RoomBooking';
+import ManageRooms from './pages/admin/ManageRooms';
+import ManageBookings from './pages/warden/ManageBookings';
 
 function App() {
   return (
@@ -32,6 +35,18 @@ function App() {
           <Route path="/admin/create-staff" element={
             <ProtectedRoute allowedRole="admin"><CreateStaff /></ProtectedRoute>
           } />
+
+          <Route path="/student/room-booking" element={
+            <ProtectedRoute allowedRoles={['student']}><RoomBooking /></ProtectedRoute>
+          } />
+
+          <Route path="/admin/manage-rooms" element={
+            <ProtectedRoute allowedRoles={['admin', 'warden']}><ManageRooms /></ProtectedRoute>
+          } />
+          <Route path="/warden/bookings" element={
+            <ProtectedRoute allowedRoles={['warden', 'admin']}><ManageBookings /></ProtectedRoute>
+          } />
+
         </Routes>
       </BrowserRouter>
     </AuthProvider>
