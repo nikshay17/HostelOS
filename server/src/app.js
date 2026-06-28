@@ -8,6 +8,7 @@ app.use('/auth', require('./routes/auth.routes'));
 app.use('/dashboard', require('./routes/dashboard.routes'));
 app.use('/rooms', require('./routes/room.routes'));
 app.use('/messbills', require('./routes/messBill.routes'));
+app.use('/gatepass', require('./routes/gatepass.routes'));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
