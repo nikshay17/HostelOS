@@ -10,6 +10,10 @@ import CreateStaff from './pages/admin/CreateStaff';
 import RoomBooking from './pages/student/RoomBooking';
 import ManageRooms from './pages/admin/ManageRooms';
 import ManageBookings from './pages/warden/ManageBookings';
+import MessBills from './pages/student/MessBills';
+import ManageMessBills from './pages/admin/ManageMessBills';
+
+
 
 function App() {
   return (
@@ -46,6 +50,14 @@ function App() {
           <Route path="/warden/bookings" element={
             <ProtectedRoute allowedRoles={['warden', 'admin']}><ManageBookings /></ProtectedRoute>
           } />
+          <Route path="/student/mess-bills" element={
+            <ProtectedRoute allowedRoles={['student']}><MessBills /></ProtectedRoute>
+          } />
+          <Route path="/admin/manage-bills" element={
+            <ProtectedRoute allowedRoles={['admin', 'warden']}><ManageMessBills /></ProtectedRoute>
+          } />
+
+
 
         </Routes>
       </BrowserRouter>
