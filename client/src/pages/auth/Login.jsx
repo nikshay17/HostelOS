@@ -9,12 +9,18 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const ROLE_REDIRECTS = {
+    student: '/student',
+    warden: '/warden',
+    admin: '/admin',
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await loginUser(form);
       login(res.data.token, res.data.user);
-      navigate(res.data.user.role === 'admin' ? '/admin' : '/student');
+      navigate(ROLE_REDIRECTS[res.data.user.role] || '/login');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
     }
