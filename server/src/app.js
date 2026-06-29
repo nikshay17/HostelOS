@@ -10,6 +10,7 @@ app.use('/rooms', require('./routes/room.routes'));
 app.use('/messbills', require('./routes/messBill.routes'));
 app.use('/gatepass', require('./routes/gatepass.routes'));
 app.use('/attendance', require('./routes/attendance.routes'));
+app.use('/face', require('./routes/faceAuth.routes'));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });

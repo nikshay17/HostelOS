@@ -4,7 +4,7 @@ const { isWithinHostelRadius } = require('../utils/geoUtils');
 // Student marks attendance for today
 exports.markAttendance = async (req, res) => {
   try {
-    const { latitude, longitude } = req.body;
+    const { latitude, longitude, faceVerified } = req.body;
     const studentId = req.user.id;
 
     if (latitude === undefined || longitude === undefined) {
@@ -37,7 +37,7 @@ exports.markAttendance = async (req, res) => {
       date: new Date(),
       status: 'present',
       location: { latitude, longitude },
-      verifiedByFace: false // flips true once Day 8 face verification is wired in
+      verifiedByFace: !!faceVerified  // changed from hardcoded false
     });
 
     res.status(201).json(attendance);
