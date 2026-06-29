@@ -3,4 +3,5 @@
 *.log
 __pycache__/
 encodings/*.pkl
+
 python-service/venv/
