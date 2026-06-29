@@ -4,6 +4,8 @@ import { markAttendance, getMyAttendance } from '../../services/attendanceServic
 import Navbar from '../../components/common/Navbar';
 import Sidebar from '../../components/common/Sidebar';
 import Loader from '../../components/common/Loader';
+import WebcamCapture from '../../components/face/WebcamCapture';
+import { verifyFace } from '../../services/faceService';
 
 const Attendance = () => {
   const { token } = useAuth();
@@ -11,6 +13,8 @@ const Attendance = () => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [checkingIn, setCheckingIn] = useState(false);
+  const [showFaceCheck, setShowFaceCheck] = useState(false);
+  const [faceVerified, setFaceVerified] = useState(false);
 
   const fetchRecords = async () => {
     setLoading(true);
@@ -38,7 +42,7 @@ const Attendance = () => {
       async (position) => {
         const { latitude, longitude } = position.coords;
         try {
-          await markAttendance({ latitude, longitude }, token);
+          await markAttendance({ latitude, longitude, faceVerified }, token);
           setMessage('Attendance marked successfully ✅');
           fetchRecords();
         } catch (err) {
@@ -55,6 +59,17 @@ const Attendance = () => {
     );
   };
 
+  const handleFaceCapture = async (base64Image) => {
+    try {
+      await verifyFace(base64Image, token);
+      setFaceVerified(true);
+      setShowFaceCheck(false);
+      setMessage('Face verified — now click check-in to complete attendance');
+    } catch (err) {
+      setMessage(err.response?.data?.message || 'Face verification failed');
+    }
+  };
+
   return (
     <div>
       <Navbar />
@@ -64,8 +79,18 @@ const Attendance = () => {
           <h2>Attendance</h2>
           {message && <p style={{ color: 'blue' }}>{message}</p>}
 
+          {!faceVerified && (
+            <div style={{ marginBottom: '1rem' }}>
+              <button onClick={() => setShowFaceCheck(!showFaceCheck)}>
+                {showFaceCheck ? 'Close Camera' : 'Verify Face First (Optional)'}
+              </button>
+              {showFaceCheck && <WebcamCapture onCapture={handleFaceCapture} buttonLabel="Verify" />}
+            </div>
+          )}
+          {faceVerified && <p style={{ color: 'green' }}>✅ Face verified for today's check-in</p>}
+
           <button onClick={handleCheckIn} disabled={checkingIn} style={{ marginBottom: '1.5rem' }}>
-            {checkingIn ? 'Checking in...' : 'Mark Today\'s Attendance'}
+            {checkingIn ? 'Checking in...' : "Mark Today's Attendance"}
           </button>
 
           <h3>My Attendance History</h3>
