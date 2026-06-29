@@ -16,6 +16,8 @@ import GatePass from './pages/student/GatePass';
 import ApproveGatePass from './pages/admin/ApproveGatePass';
 import Attendance from './pages/student/Attendance';
 import AttendanceLogs from './pages/admin/AttendanceLogs';
+import FaceVerify from './pages/student/FaceVerify';
+
 
 
 
@@ -78,6 +80,10 @@ function App() {
 
           <Route path="/warden/attendance" element={
             <ProtectedRoute allowedRoles={['warden', 'admin']}><AttendanceLogs /></ProtectedRoute>
+          } />
+
+          <Route path="/student/face-verify" element={
+            <ProtectedRoute allowedRoles={['student']}><FaceVerify /></ProtectedRoute>
           } />
 
 
