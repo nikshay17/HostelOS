@@ -14,6 +14,8 @@ import MessBills from './pages/student/MessBills';
 import ManageMessBills from './pages/admin/ManageMessBills';
 import GatePass from './pages/student/GatePass';
 import ApproveGatePass from './pages/admin/ApproveGatePass';
+import Attendance from './pages/student/Attendance';
+import AttendanceLogs from './pages/admin/AttendanceLogs';
 
 
 
@@ -49,20 +51,33 @@ function App() {
           <Route path="/admin/manage-rooms" element={
             <ProtectedRoute allowedRoles={['admin', 'warden']}><ManageRooms /></ProtectedRoute>
           } />
+
           <Route path="/warden/bookings" element={
             <ProtectedRoute allowedRoles={['warden', 'admin']}><ManageBookings /></ProtectedRoute>
           } />
+
           <Route path="/student/mess-bills" element={
             <ProtectedRoute allowedRoles={['student']}><MessBills /></ProtectedRoute>
           } />
+
           <Route path="/admin/manage-bills" element={
             <ProtectedRoute allowedRoles={['admin', 'warden']}><ManageMessBills /></ProtectedRoute>
           } />
+
           <Route path="/student/gate-pass" element={
             <ProtectedRoute allowedRoles={['student']}><GatePass /></ProtectedRoute>
           } />
+
           <Route path="/warden/gate-passes" element={
             <ProtectedRoute allowedRoles={['warden', 'admin']}><ApproveGatePass /></ProtectedRoute>
+          } />
+
+          <Route path="/student/attendance" element={
+            <ProtectedRoute allowedRoles={['student']}><Attendance /></ProtectedRoute>
+          } />
+
+          <Route path="/warden/attendance" element={
+            <ProtectedRoute allowedRoles={['warden', 'admin']}><AttendanceLogs /></ProtectedRoute>
           } />
 
 
