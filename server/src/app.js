@@ -17,6 +17,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use(require('./middleware/error.middleware'));
+app.use('/complaints', require('./routes/complaint.routes'));
 
 
 module.exports = app;
