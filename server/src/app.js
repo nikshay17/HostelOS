@@ -20,5 +20,5 @@ app.get('/health', (req, res) => {
 app.use(require('./middleware/error.middleware'));
 app.use('/complaints', require('./routes/complaint.routes'));
 
-app.use('/analytics', require('./src/routes/analytics.routes'));
+app.use('/analytics', require('./routes/analytics.routes'));
 module.exports = app;
