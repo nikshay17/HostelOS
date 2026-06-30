@@ -75,6 +75,16 @@ exports.createStaff = async (req, res) => {
       createdBy: req.user.id
     });
 
+    const recordAudit = require('../utils/auditLog');
+
+    await recordAudit({
+      req,
+      action: 'CREATE_STAFF',
+      targetType: 'User',
+      targetId: user._id,
+      details: { role, email }
+    });
+
     res.status(201).json({
       message: `${role} account created successfully`,
       user: { id: user._id, name: user.name, email: user.email, role: user.role }

@@ -5,3 +5,5 @@ __pycache__/
 encodings/*.pkl
 
 python-service/venv/
+logs/
+
