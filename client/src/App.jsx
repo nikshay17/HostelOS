@@ -21,7 +21,7 @@ import ManageComplaints from './pages/admin/ManageComplaints';
 import Complaints from './pages/student/Complaints';
 import Feedback from './pages/student/Feedback';
 import FeedbackOverview from './pages/admin/FeedbackOverview';
-
+import Analytics from './pages/admin/Analytics';
 
 
 function App() {
@@ -103,6 +103,10 @@ function App() {
 
           <Route path="/admin/feedback" element={
             <ProtectedRoute allowedRoles={['warden', 'admin']}><FeedbackOverview /></ProtectedRoute>
+          } />
+
+          <Route path="/admin/analytics" element={
+            <ProtectedRoute allowedRoles={['admin']}><Analytics /></ProtectedRoute>
           } />
 
 
