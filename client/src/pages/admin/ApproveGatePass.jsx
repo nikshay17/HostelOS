@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import {
   getPendingGatePasses, approveGatePass, rejectGatePass, verifyGatePass
@@ -47,7 +47,8 @@ const ApproveGatePass = () => {
     }
   };
 
-  const handleScanSuccess = async (gatePassId) => {
+  // Stable references — won't change identity on every render
+  const handleScanSuccess = useCallback(async (gatePassId) => {
     try {
       const res = await verifyGatePass(gatePassId, token);
       setMessage(`✅ ${res.data.gatePass.student.name} return verified`);
@@ -55,11 +56,11 @@ const ApproveGatePass = () => {
     } catch (err) {
       setMessage(err.response?.data?.message || 'Verification failed');
     }
-  };
+  }, [token]);
 
-  const handleScanError = (errMsg) => {
+  const handleScanError = useCallback((errMsg) => {
     setMessage(errMsg);
-  };
+  }, []);
 
   return (
     <div>
