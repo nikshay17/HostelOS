@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ProtectedRoute from './components/common/ProtectedRoute';
@@ -22,11 +23,15 @@ import Complaints from './pages/student/Complaints';
 import Feedback from './pages/student/Feedback';
 import FeedbackOverview from './pages/admin/FeedbackOverview';
 import Analytics from './pages/admin/Analytics';
+import Broadcast from './pages/admin/Broadcast';
+
+
 
 
 function App() {
   return (
     <AuthProvider>
+      <NotificationProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -108,10 +113,14 @@ function App() {
           <Route path="/admin/analytics" element={
             <ProtectedRoute allowedRoles={['admin']}><Analytics /></ProtectedRoute>
           } />
+          <Route path="/admin/broadcast" element={
+            <ProtectedRoute allowedRoles={['warden', 'admin']}><Broadcast /></ProtectedRoute>
+          } />
 
 
         </Routes>
       </BrowserRouter>
+      </NotificationProvider>
     </AuthProvider>
   );
 }
