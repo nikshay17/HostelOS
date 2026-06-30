@@ -1,4 +1,5 @@
 const Complaint = require('../models/Complaint.model');
+const sendNotification = require('../utils/sendNotification');
 
 // Student files a complaint
 exports.createComplaint = async (req, res) => {
@@ -67,6 +68,16 @@ exports.updateComplaintStatus = async (req, res) => {
     if (status === 'resolved') complaint.resolvedBy = req.user.id;
 
     await complaint.save();
+
+    await sendNotification({
+      recipient: complaint.student,
+      title: `Complaint ${status === 'resolved' ? 'Resolved' : 'Updated'}`,
+      message: status === 'resolved'
+        ? `Your complaint has been resolved. ${resolutionNotes || ''}`
+        : `Your complaint status changed to "${status}".`,
+      type: status === 'resolved' ? 'info' : 'info'
+    });
+
     res.json(complaint);
   } catch (err) {
     res.status(500).json({ message: err.message });

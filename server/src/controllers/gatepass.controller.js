@@ -1,5 +1,6 @@
 const GatePass = require('../models/GatePass.model');
 const generateQR = require('../utils/qrGenerator');
+const sendNotification = require('../utils/sendNotification');
 
 // Student requests a gate pass
 exports.createGatePass = async (req, res) => {
@@ -70,6 +71,13 @@ exports.approveGatePass = async (req, res) => {
     gatePass.qrCode = await generateQR(gatePass._id.toString());
     await gatePass.save();
 
+    await sendNotification({
+      recipient: gatePass.student,
+      title: 'Gate Pass Approved',
+      message: `Your gate pass request has been approved. Show the QR code at the gate.`,
+      type: 'info'
+    });
+
     res.json(gatePass);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -87,6 +95,14 @@ exports.rejectGatePass = async (req, res) => {
     gatePass.status = 'rejected';
     gatePass.approvedBy = req.user.id;
     await gatePass.save();
+
+    await sendNotification({
+      recipient: gatePass.student,
+      title: 'Gate Pass Rejected',
+      message: 'Your gate pass request was rejected.',
+      type: 'warning'
+    });
+
     res.json(gatePass);
   } catch (err) {
     res.status(500).json({ message: err.message });

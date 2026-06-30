@@ -12,6 +12,7 @@ app.use('/gatepass', require('./routes/gatepass.routes'));
 app.use('/attendance', require('./routes/attendance.routes'));
 app.use('/face', require('./routes/faceAuth.routes'));
 app.use('/feedback', require('./routes/feedback.routes'));
+app.use('/notifications', require('./routes/notification.routes'));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
