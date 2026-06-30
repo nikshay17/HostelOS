@@ -19,6 +19,9 @@ import AttendanceLogs from './pages/admin/AttendanceLogs';
 import FaceVerify from './pages/student/FaceVerify';
 import ManageComplaints from './pages/admin/ManageComplaints';
 import Complaints from './pages/student/Complaints';
+import Feedback from './pages/student/Feedback';
+import FeedbackOverview from './pages/admin/FeedbackOverview';
+
 
 
 function App() {
@@ -93,6 +96,15 @@ function App() {
           <Route path="/student/complaints" element={
             <ProtectedRoute allowedRoles={['student']}><Complaints /></ProtectedRoute>
           } />
+
+          <Route path="/student/feedback" element={
+            <ProtectedRoute allowedRoles={['student']}><Feedback /></ProtectedRoute>
+          } />
+
+          <Route path="/admin/feedback" element={
+            <ProtectedRoute allowedRoles={['warden', 'admin']}><FeedbackOverview /></ProtectedRoute>
+          } />
+
 
         </Routes>
       </BrowserRouter>
