@@ -1,6 +1,7 @@
 const Booking = require('../models/Booking.model');
 const Room = require('../models/Room.model');
 const User = require('../models/User.model');
+const sendNotification = require('../utils/sendNotification');
 
 // Student requests a booking
 exports.createBooking = async (req, res) => {
@@ -102,6 +103,13 @@ exports.approveBooking = async (req, res) => {
     // Denormalized convenience field on User
     await User.findByIdAndUpdate(booking.student, { roomNumber: room.roomNumber });
 
+    await sendNotification({
+      recipient: booking.student,
+      title: 'Room Booking Approved',
+      message: `Your booking for room ${room.roomNumber} has been approved.`,
+      type: 'info'
+    });
+
     res.json(booking);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -119,6 +127,14 @@ exports.rejectBooking = async (req, res) => {
     booking.status = 'rejected';
     booking.approvedBy = req.user.id;
     await booking.save();
+    
+    await sendNotification({
+      recipient: booking.student,
+      title: 'Room Booking Rejected',
+      message: 'Your room booking request was rejected. Contact your warden for details.',
+      type: 'warning'
+    });
+
     res.json(booking);
   } catch (err) {
     res.status(500).json({ message: err.message });

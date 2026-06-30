@@ -1,5 +1,6 @@
 const MessBill = require('../models/MessBill.model');
 const User = require('../models/User.model');
+const sendNotification = require('../utils/sendNotification');
 
 // Student views their own bills
 exports.getMyBills = async (req, res) => {
@@ -64,6 +65,16 @@ exports.generateBillsForMonth = async (req, res) => {
     }
 
     const created = await MessBill.insertMany(toCreate);
+
+    await Promise.all(
+      created.map(bill => sendNotification({
+        recipient: bill.student,
+        title: 'New Mess Bill Generated',
+        message: `Your mess bill for ${month} (₹${amount}) is due on ${new Date(dueDate).toLocaleDateString()}.`,
+        type: 'warning'
+      }))
+    );
+
     res.status(201).json({ message: `${created.length} bills created for ${month}`, count: created.length });
   } catch (err) {
     res.status(500).json({ message: err.message });
