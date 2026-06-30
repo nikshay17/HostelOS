@@ -57,6 +57,17 @@ exports.deleteRoom = async (req, res) => {
       return res.status(400).json({ message: 'Cannot delete a room with active occupants' });
     }
     await Room.findByIdAndDelete(req.params.id);
+
+    const recordAudit = require('../utils/auditLog');
+
+    await recordAudit({
+      req,
+      action: 'DELETE_ROOM',
+      targetType: 'Room',
+      targetId: room._id,
+      details: { roomNumber: room.roomNumber }
+    });
+    
     res.json({ message: 'Room deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });

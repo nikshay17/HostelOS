@@ -110,6 +110,16 @@ exports.approveBooking = async (req, res) => {
       type: 'info'
     });
 
+    const recordAudit = require('../utils/auditLog');
+
+    await recordAudit({
+      req,
+      action: 'APPROVE_BOOKING',
+      targetType: 'Booking',
+      targetId: booking._id,
+      details: { student: booking.student, room: room._id }
+    });
+
     res.json(booking);
   } catch (err) {
     res.status(500).json({ message: err.message });

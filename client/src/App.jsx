@@ -24,6 +24,7 @@ import Feedback from './pages/student/Feedback';
 import FeedbackOverview from './pages/admin/FeedbackOverview';
 import Analytics from './pages/admin/Analytics';
 import Broadcast from './pages/admin/Broadcast';
+import SecuritySettings from './pages/admin/SecuritySettings';
 
 
 
@@ -113,8 +114,13 @@ function App() {
           <Route path="/admin/analytics" element={
             <ProtectedRoute allowedRoles={['admin']}><Analytics /></ProtectedRoute>
           } />
+          
           <Route path="/admin/broadcast" element={
             <ProtectedRoute allowedRoles={['warden', 'admin']}><Broadcast /></ProtectedRoute>
+          } />
+
+          <Route path="/admin/security" element={
+            <ProtectedRoute allowedRoles={['admin']}><SecuritySettings /></ProtectedRoute>
           } />
 
 
