@@ -40,3 +40,5 @@ app.use('/complaints', require('./routes/complaint.routes'));
 
 app.use('/analytics', require('./routes/analytics.routes'));
 module.exports = app;
+
+app.use('/security', require('./src/routes/security.routes'));
