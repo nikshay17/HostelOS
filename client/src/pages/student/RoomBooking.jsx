@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getAllRooms, requestBooking, getMyBookings, cancelBooking } from '../../services/roomService';
-import Navbar from '../../components/common/Navbar';
-import Sidebar from '../../components/common/Sidebar';
+import PageLayout from '../../components/common/PageLayout';
+import PageHeader from '../../components/common/PageHeader';
+import Button from '../../components/common/Button';
+import Card from '../../components/common/Card';
+import Badge from '../../components/common/Badge';
 import Loader from '../../components/common/Loader';
+import ErrorBanner from '../../components/common/ErrorBanner';
+import SuccessBanner from '../../components/common/SuccessBanner';
+import EmptyState from '../../components/common/EmptyState';
+import SectionHeader from '../../components/common/SectionHeader';
+import { LuBedDouble } from 'react-icons/lu';
+import { FiUsers, FiLayers, FiCheckCircle } from 'react-icons/fi';
 
 const RoomBooking = () => {
   const { token } = useAuth();
@@ -11,18 +20,17 @@ const RoomBooking = () => {
   const [myBookings, setMyBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const [requesting, setRequesting] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [roomsRes, bookingsRes] = await Promise.all([
-        getAllRooms(token),
-        getMyBookings(token)
-      ]);
+      const [roomsRes, bookingsRes] = await Promise.all([getAllRooms(token), getMyBookings(token)]);
       setRooms(roomsRes.data);
       setMyBookings(bookingsRes.data);
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Failed to load data');
+      setError('Failed to load room data');
     } finally {
       setLoading(false);
     }
@@ -31,73 +39,133 @@ const RoomBooking = () => {
   useEffect(() => { fetchData(); }, [token]);
 
   const handleRequest = async (roomId) => {
-    setMessage('');
+    setMessage(''); setError('');
+    setRequesting(roomId);
     try {
       await requestBooking(roomId, token);
       setMessage('Booking request sent — awaiting warden approval');
       fetchData();
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Booking request failed');
+      setError(err.response?.data?.message || 'Booking request failed');
+    } finally {
+      setRequesting(null);
     }
   };
 
   const handleCancel = async (bookingId) => {
+    setError('');
     try {
       await cancelBooking(bookingId, token);
+      setMessage('Booking cancelled');
       fetchData();
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Cancel failed');
+      setError(err.response?.data?.message || 'Cancel failed');
     }
   };
 
   return (
-    <div>
-      <Navbar />
-      <div style={{ display: 'flex' }}>
-        <Sidebar />
-        <main style={{ padding: '1rem', flex: 1 }}>
-          <h2>Room Booking</h2>
-          {message && <p style={{ color: 'blue' }}>{message}</p>}
-          {loading ? <Loader /> : (
-            <>
-              <h3>My Bookings</h3>
-              {myBookings.length === 0 ? <p>No bookings yet.</p> : (
-                <ul>
-                  {myBookings.map(b => (
-                    <li key={b._id}>
-                      Room {b.room.roomNumber} — Status: <strong>{b.status}</strong>
-                      {b.status === 'pending' && (
-                        <button onClick={() => handleCancel(b._id)} style={{ marginLeft: '0.5rem' }}>
-                          Cancel
-                        </button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
+    <PageLayout>
+      <PageHeader
+        title="Room Booking"
+        description="Browse available rooms and manage your booking requests"
+      />
+      <ErrorBanner message={error} />
+      <SuccessBanner message={message} />
 
-              <h3>Available Rooms</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
-                {rooms.map(room => (
-                  <div key={room._id} style={{ border: '1px solid #ccc', padding: '1rem' }}>
-                    <h4>{room.roomNumber}</h4>
-                    <p>Floor: {room.floor} | Type: {room.type}</p>
-                    <p>Occupancy: {room.occupants.length}/{room.capacity}</p>
-                    <p>Status: {room.status}</p>
-                    <button
-                      onClick={() => handleRequest(room._id)}
-                      disabled={room.status !== 'available'}
-                    >
-                      Request Booking
-                    </button>
-                  </div>
-                ))}
+      {loading ? <Loader /> : (
+        <div className="space-y-8">
+
+          {/* My Bookings */}
+          <section>
+            <SectionHeader
+              title="My Bookings"
+              description="Your current and past booking requests"
+            />
+            {myBookings.length === 0 ? (
+              <EmptyState
+                title="No bookings yet"
+                description="Request a room below to get started"
+                icon={LuBedDouble}
+              />
+            ) : (
+              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-card">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-200">
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Room</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Floor</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {myBookings.map(b => (
+                        <tr key={b._id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-4 py-3 font-medium text-gray-900">{b.room.roomNumber}</td>
+                          <td className="px-4 py-3 text-gray-500 capitalize">{b.room.type}</td>
+                          <td className="px-4 py-3 text-gray-500">Floor {b.room.floor}</td>
+                          <td className="px-4 py-3"><Badge status={b.status} /></td>
+                          <td className="px-4 py-3">
+                            {b.status === 'pending' && (
+                              <Button variant="danger" size="sm" onClick={() => handleCancel(b._id)}>
+                                Cancel
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </>
-          )}
-        </main>
-      </div>
-    </div>
+            )}
+          </section>
+
+          {/* Available Rooms */}
+          <section>
+            <SectionHeader
+              title="Available Rooms"
+              description="Click 'Request' on any available room"
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {rooms.map(room => (
+                <Card key={room._id} className="p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <p className="text-base font-semibold text-gray-900">{room.roomNumber}</p>
+                      <p className="text-sm text-gray-500 capitalize mt-0.5">{room.type} · Floor {room.floor}</p>
+                    </div>
+                    <Badge status={room.status} />
+                  </div>
+                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                    <span className="flex items-center gap-1.5">
+                      <FiUsers size={13} />
+                      {room.occupants.length}/{room.capacity} occupied
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <FiLayers size={13} />
+                      Floor {room.floor}
+                    </span>
+                  </div>
+                  <Button
+                    className="w-full"
+                    size="sm"
+                    disabled={room.status !== 'available'}
+                    loading={requesting === room._id}
+                    onClick={() => handleRequest(room._id)}
+                    iconLeft={<FiCheckCircle size={13} />}
+                  >
+                    Request Booking
+                  </Button>
+                </Card>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
+    </PageLayout>
   );
 };
 

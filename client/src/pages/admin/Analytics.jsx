@@ -3,16 +3,19 @@ import { useAuth } from '../../context/AuthContext';
 import { getFullAnalytics, getAttendanceTrend } from '../../services/analyticsService';
 import BarChart from '../../components/charts/BarChart';
 import PieChart from '../../components/charts/PieChart';
-import Navbar from '../../components/common/Navbar';
-import Sidebar from '../../components/common/Sidebar';
+import PageLayout from '../../components/common/PageLayout';
+import PageHeader from '../../components/common/PageHeader';
+import Card from '../../components/common/Card';
 import Loader from '../../components/common/Loader';
+import ErrorBanner from '../../components/common/ErrorBanner';
+import SectionHeader from '../../components/common/SectionHeader';
 
 const Analytics = () => {
   const { token } = useAuth();
   const [data, setData] = useState(null);
   const [attendanceTrend, setAttendanceTrend] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -25,7 +28,7 @@ const Analytics = () => {
         setData(fullRes.data);
         setAttendanceTrend(trendRes.data.trend);
       } catch (err) {
-        setMessage(err.response?.data?.message || 'Failed to load analytics');
+        setError('Failed to load analytics');
       } finally {
         setLoading(false);
       }
@@ -33,66 +36,50 @@ const Analytics = () => {
     fetchAll();
   }, [token]);
 
-  // Reshape attendance trend data: group by date, separate status as keys
   const reshapeAttendanceTrend = (trend) => {
     const byDate = {};
     trend.forEach(item => {
       const date = item._id.date;
-      const status = item._id.status;
       if (!byDate[date]) byDate[date] = { _id: date };
-      byDate[date][status] = item.count;
+      byDate[date][item._id.status] = item.count;
     });
     return Object.values(byDate);
   };
 
   return (
-    <div>
-      <Navbar />
-      <div style={{ display: 'flex' }}>
-        <Sidebar />
-        <main style={{ padding: '1rem', flex: 1 }}>
-          <h2>Admin Analytics</h2>
-          {message && <p style={{ color: 'red' }}>{message}</p>}
+    <PageLayout>
+      <PageHeader title="Analytics" description="Hostel performance metrics and insights" />
+      <ErrorBanner message={error} />
 
-          {loading ? <Loader /> : data && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2rem' }}>
+      {loading ? <Loader /> : data && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <Card className="p-5">
+            <SectionHeader title="Room Occupancy by Status" />
+            <PieChart data={data.occupancy} />
+          </Card>
 
-              <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
-                <h4>Room Occupancy by Status</h4>
-                <PieChart data={data.occupancy} />
-              </div>
+          <Card className="p-5">
+            <SectionHeader title="Complaints by Category" />
+            <BarChart data={data.complaints} barColor="#ef4444" />
+          </Card>
 
-              <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
-                <h4>Complaints by Category</h4>
-                <BarChart data={data.complaints} barColor="#ef4444" />
-              </div>
+          <Card className="p-5">
+            <SectionHeader title="Mess Bills by Status" />
+            <BarChart data={data.bills} barColor="#22c55e" />
+          </Card>
 
-              <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
-                <h4>Mess Bills by Status</h4>
-                <BarChart data={data.bills} barColor="#22c55e" />
-              </div>
+          <Card className="p-5">
+            <SectionHeader title="Gate Passes by Status" />
+            <PieChart data={data.gatepasses} />
+          </Card>
 
-              <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
-                <h4>Gate Passes by Status</h4>
-                <PieChart data={data.gatepasses} />
-              </div>
-
-              <div style={{ border: '1px solid #ccc', padding: '1rem', gridColumn: 'span 2' }}>
-                <h4>Attendance — Last 7 Days</h4>
-                <BarChart data={reshapeAttendanceTrend(attendanceTrend)} dataKey="present" barColor="#4f46e5" />
-              </div>
-
-              <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
-                <h4>Population</h4>
-                <p>Students: <strong>{data.totalStudents}</strong></p>
-                <p>Wardens: <strong>{data.totalWardens}</strong></p>
-              </div>
-
-            </div>
-          )}
-        </main>
-      </div>
-    </div>
+          <Card className="p-5 lg:col-span-2">
+            <SectionHeader title="Attendance — Last 7 Days" />
+            <BarChart data={reshapeAttendanceTrend(attendanceTrend)} dataKey="present" barColor="#4f46e5" />
+          </Card>
+        </div>
+      )}
+    </PageLayout>
   );
 };
 

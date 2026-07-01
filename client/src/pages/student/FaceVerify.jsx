@@ -2,15 +2,20 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { enrollFace, verifyFace, getEnrollmentStatus } from '../../services/faceService';
 import WebcamCapture from '../../components/face/WebcamCapture';
-import Navbar from '../../components/common/Navbar';
-import Sidebar from '../../components/common/Sidebar';
+import PageLayout from '../../components/common/PageLayout';
+import PageHeader from '../../components/common/PageHeader';
+import Card from '../../components/common/Card';
 import Loader from '../../components/common/Loader';
+import ErrorBanner from '../../components/common/ErrorBanner';
+import SuccessBanner from '../../components/common/SuccessBanner';
+import { FiCamera, FiCheckCircle, FiShield } from 'react-icons/fi';
 
 const FaceVerify = () => {
   const { token } = useAuth();
   const [enrolled, setEnrolled] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const fetchStatus = async () => {
@@ -19,7 +24,7 @@ const FaceVerify = () => {
       const res = await getEnrollmentStatus(token);
       setEnrolled(res.data.faceEncoded);
     } catch (err) {
-      setMessage('Failed to check enrollment status');
+      setError('Failed to check enrollment status');
     } finally {
       setLoading(false);
     }
@@ -28,59 +33,73 @@ const FaceVerify = () => {
   useEffect(() => { fetchStatus(); }, [token]);
 
   const handleEnroll = async (base64Image) => {
-    setMessage('');
+    setMessage(''); setError('');
     setSubmitting(true);
     try {
       const res = await enrollFace(base64Image, token);
       setMessage(res.data.message);
       fetchStatus();
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Enrollment failed');
+      setError(err.response?.data?.message || 'Enrollment failed');
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleVerify = async (base64Image) => {
-    setMessage('');
+    setMessage(''); setError('');
     setSubmitting(true);
     try {
       const res = await verifyFace(base64Image, token);
-      setMessage(`✅ ${res.data.message} (distance: ${res.data.distance.toFixed(3)})`);
+      setMessage(`Face verified successfully (distance: ${res.data.distance.toFixed(3)})`);
     } catch (err) {
-      setMessage(`❌ ${err.response?.data?.message || 'Verification failed'}`);
+      setError(err.response?.data?.message || 'Verification failed');
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div>
-      <Navbar />
-      <div style={{ display: 'flex' }}>
-        <Sidebar />
-        <main style={{ padding: '1rem', flex: 1 }}>
-          <h2>Face Verification</h2>
-          {message && <p style={{ color: 'blue' }}>{message}</p>}
+    <PageLayout>
+      <PageHeader
+        title="Face Verification"
+        description="Enroll your face for biometric attendance verification"
+      />
+      <ErrorBanner message={error} />
+      <SuccessBanner message={message} />
 
-          {loading ? <Loader /> : (
-            <>
-              {!enrolled ? (
-                <div>
-                  <p>You haven't enrolled your face yet. Look at the camera and capture a clear photo.</p>
-                  <WebcamCapture onCapture={handleEnroll} buttonLabel={submitting ? 'Enrolling...' : 'Enroll My Face'} />
-                </div>
-              ) : (
-                <div>
-                  <p>✅ Face already enrolled. You can test verification below.</p>
-                  <WebcamCapture onCapture={handleVerify} buttonLabel={submitting ? 'Verifying...' : 'Verify My Face'} />
-                </div>
-              )}
-            </>
-          )}
-        </main>
-      </div>
-    </div>
+      {loading ? <Loader /> : (
+        <div className="max-w-lg">
+          <Card className="p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className={`p-2.5 rounded-xl ${enrolled ? 'bg-success-light' : 'bg-warning-light'}`}>
+                {enrolled ? <FiCheckCircle size={20} className="text-success" /> : <FiCamera size={20} className="text-warning" />}
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {enrolled ? 'Face Enrolled' : 'Not Yet Enrolled'}
+                </p>
+                <p className="text-xs text-gray-400">
+                  {enrolled ? 'Your face is registered for verification' : 'Enroll your face to use biometric check-in'}
+                </p>
+              </div>
+            </div>
+
+            <WebcamCapture
+              onCapture={enrolled ? handleVerify : handleEnroll}
+              buttonLabel={submitting ? 'Processing...' : enrolled ? 'Verify My Face' : 'Enroll My Face'}
+            />
+
+            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+              <p className="text-xs text-gray-500 flex items-center gap-1.5">
+                <FiShield size={12} />
+                Your face data is stored securely and used only for attendance verification
+              </p>
+            </div>
+          </Card>
+        </div>
+      )}
+    </PageLayout>
   );
 };
 
