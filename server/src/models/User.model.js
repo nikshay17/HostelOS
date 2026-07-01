@@ -6,6 +6,14 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['student', 'warden', 'admin'], default: 'student' },
 
+  otp: { type: String },
+  otpExpiry: { type: Date },
+  status: {
+    type: String,
+    enum: ['pending', 'active', 'suspended'],
+    default: 'pending'
+  },
+
   // Student-only fields
   studentId: { type: String, unique: true, sparse: true },
   roomNumber: { type: String },
