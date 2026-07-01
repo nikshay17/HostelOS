@@ -37,6 +37,14 @@ const Register = () => {
       const res = await registerUser(form);
       login(res.data.token, res.data.user);
       navigate(ROLE_REDIRECTS[res.data.user.role] || '/login');
+
+      // With this:
+      navigate('/verify-otp', {
+        state: {
+          userId: res.data.userId,
+          email: form.email
+        }
+      });
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
     } finally {

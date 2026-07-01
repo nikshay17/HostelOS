@@ -25,8 +25,16 @@ const Login = () => {
       login(res.data.token, res.data.user);
       navigate(ROLE_REDIRECTS[res.data.user.role] || '/login');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
-    } finally {
+        const data = err.response?.data;
+        // If user exists but hasn't verified email, redirect to OTP screen
+        if (data?.requiresVerification) {
+          navigate('/verify-otp', {
+            state: { userId: data.userId, email: form.email }
+          });
+          return;
+        }
+        setError(data?.message || 'Login failed');
+      } finally {
       setLoading(false);
     }
   };
