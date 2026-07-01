@@ -25,6 +25,7 @@ import FeedbackOverview from './pages/admin/FeedbackOverview';
 import Analytics from './pages/admin/Analytics';
 import Broadcast from './pages/admin/Broadcast';
 import SecuritySettings from './pages/admin/SecuritySettings';
+import Landing from './pages/Landing';
 
 
 
@@ -122,6 +123,7 @@ function App() {
           <Route path="/admin/security" element={
             <ProtectedRoute allowedRoles={['admin']}><SecuritySettings /></ProtectedRoute>
           } />
+          <Route path="/" element={<Landing />} />
 
 
         </Routes>
