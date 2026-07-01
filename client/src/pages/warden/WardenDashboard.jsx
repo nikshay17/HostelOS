@@ -1,52 +1,74 @@
 import { useEffect, useState } from 'react';
 import { getWardenSummary } from '../../services/dashboardService';
 import { useAuth } from '../../context/AuthContext';
-import Navbar from '../../components/common/Navbar';
-import Sidebar from '../../components/common/Sidebar';
+import PageLayout from '../../components/common/PageLayout';
+import StatCard from '../../components/common/StatCard';
 import Loader from '../../components/common/Loader';
+import ErrorBanner from '../../components/common/ErrorBanner';
+import { LuBedDouble } from 'react-icons/lu';
+import { FiLogOut, FiAlertCircle, FiUsers } from 'react-icons/fi';
 
 const WardenDashboard = () => {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     getWardenSummary(token)
       .then(res => setSummary(res.data))
-      .catch(err => console.error(err))
+      .catch(() => setError('Failed to load dashboard'))
       .finally(() => setLoading(false));
   }, [token]);
 
   return (
-    <div>
-      <Navbar />
-      <div style={{ display: 'flex' }}>
-        <Sidebar />
-        <main style={{ padding: '1rem', flex: 1 }}>
-          <h2>Warden Dashboard</h2>
-          {loading ? <Loader /> : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-              <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
-                <h4>Pending Bookings</h4>
-                <p>{summary.pendingBookings}</p>
-              </div>
-              <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
-                <h4>Pending Gate Passes</h4>
-                <p>{summary.pendingGatePasses}</p>
-              </div>
-              <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
-                <h4>Open Complaints</h4>
-                <p>{summary.openComplaints}</p>
-              </div>
-              <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
-                <h4>Total Students</h4>
-                <p>{summary.totalStudents}</p>
-              </div>
-            </div>
-          )}
-        </main>
+    <PageLayout>
+      <div className="mb-6">
+        <h2 className="text-2xl font-semibold text-gray-900">
+          Warden Dashboard
+        </h2>
+        <p className="text-sm text-gray-500 mt-0.5">Today's hostel operations overview</p>
       </div>
-    </div>
+
+      <ErrorBanner message={error} />
+
+      {loading ? <Loader /> : summary && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <StatCard
+            title="Pending Bookings"
+            value={summary.pendingBookings}
+            description="Awaiting approval"
+            icon={LuBedDouble}
+            iconColor="text-warning"
+            iconBg="bg-warning-light"
+          />
+          <StatCard
+            title="Pending Gate Passes"
+            value={summary.pendingGatePasses}
+            description="Awaiting approval"
+            icon={FiLogOut}
+            iconColor="text-primary"
+            iconBg="bg-primary-light"
+          />
+          <StatCard
+            title="Open Complaints"
+            value={summary.openComplaints}
+            description="Unresolved issues"
+            icon={FiAlertCircle}
+            iconColor="text-danger"
+            iconBg="bg-danger-light"
+          />
+          <StatCard
+            title="Total Students"
+            value={summary.totalStudents}
+            description="Registered in hostel"
+            icon={FiUsers}
+            iconColor="text-gray-500"
+            iconBg="bg-gray-100"
+          />
+        </div>
+      )}
+    </PageLayout>
   );
 };
 
