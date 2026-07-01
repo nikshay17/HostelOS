@@ -26,6 +26,7 @@ import Analytics from './pages/admin/Analytics';
 import Broadcast from './pages/admin/Broadcast';
 import SecuritySettings from './pages/admin/SecuritySettings';
 import Landing from './pages/Landing';
+import VerifyOTP from './pages/auth/VerifyOTP';
 
 
 
@@ -124,6 +125,8 @@ function App() {
             <ProtectedRoute allowedRoles={['admin']}><SecuritySettings /></ProtectedRoute>
           } />
           <Route path="/" element={<Landing />} />
+
+          <Route path="/verify-otp" element={<VerifyOTP />} />
 
 
         </Routes>
