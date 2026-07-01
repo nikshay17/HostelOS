@@ -1,16 +1,33 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getAllFeedback, getFeedbackSummary } from '../../services/feedbackService';
-import Navbar from '../../components/common/Navbar';
-import Sidebar from '../../components/common/Sidebar';
+import PageLayout from '../../components/common/PageLayout';
+import PageHeader from '../../components/common/PageHeader';
+import SectionHeader from '../../components/common/SectionHeader';
+import Card from '../../components/common/Card';
+import Avatar from '../../components/common/Avatar';
 import Loader from '../../components/common/Loader';
+import ErrorBanner from '../../components/common/ErrorBanner';
+import EmptyState from '../../components/common/EmptyState';
+import { FiMessageSquare, FiStar, FiFilter } from 'react-icons/fi';
+
+const StarDisplay = ({ rating }) => (
+  <div className="flex items-center gap-0.5">
+    {[1,2,3,4,5].map(n => (
+      <FiStar key={n} size={12}
+        className={n <= rating ? 'text-warning' : 'text-gray-200'}
+        style={{ fill: n <= rating ? 'currentColor' : 'none' }}
+      />
+    ))}
+  </div>
+);
 
 const FeedbackOverview = () => {
   const { token } = useAuth();
   const [summary, setSummary] = useState(null);
   const [feedbackList, setFeedbackList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
 
   const fetchData = async () => {
@@ -18,7 +35,6 @@ const FeedbackOverview = () => {
     try {
       const filters = {};
       if (filterCategory) filters.category = filterCategory;
-
       const [summaryRes, listRes] = await Promise.all([
         getFeedbackSummary(token),
         getAllFeedback(token, filters)
@@ -26,7 +42,7 @@ const FeedbackOverview = () => {
       setSummary(summaryRes.data);
       setFeedbackList(listRes.data);
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Failed to load feedback data');
+      setError('Failed to load feedback data');
     } finally {
       setLoading(false);
     }
@@ -34,70 +50,94 @@ const FeedbackOverview = () => {
 
   useEffect(() => { fetchData(); }, [token, filterCategory]);
 
-  const renderStars = (rating) => '⭐'.repeat(rating) + '☆'.repeat(5 - rating);
-
   return (
-    <div>
-      <Navbar />
-      <div style={{ display: 'flex' }}>
-        <Sidebar />
-        <main style={{ padding: '1rem', flex: 1 }}>
-          <h2>Feedback Overview</h2>
-          {message && <p style={{ color: 'blue' }}>{message}</p>}
+    <PageLayout>
+      <PageHeader title="Feedback Overview" description="Student satisfaction ratings and comments" />
+      <ErrorBanner message={error} />
 
-          {loading ? <Loader /> : (
-            <>
-              <h3>Summary</h3>
-              {summary && (
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <p>
-                    <strong>Overall Average:</strong> {summary.overall.overallAverage?.toFixed(2) || '—'} / 5
-                    {' '}({summary.overall.totalResponses} responses)
-                  </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+      {loading ? <Loader /> : (
+        <>
+          {summary && (
+            <div className="mb-6">
+              <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-card mb-4">
+                <div className="flex items-center gap-4">
+                  <div className="text-center">
+                    <p className="text-4xl font-bold text-gray-900">{summary.overall.overallAverage?.toFixed(1) || '—'}</p>
+                    <StarDisplay rating={Math.round(summary.overall.overallAverage || 0)} />
+                    <p className="text-xs text-gray-400 mt-1">{summary.overall.totalResponses} responses</p>
+                  </div>
+                  <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 pl-4 border-l border-gray-200">
                     {summary.byCategory.map(cat => (
-                      <div key={cat._id} style={{ border: '1px solid #ccc', padding: '1rem' }}>
-                        <h4>{cat._id}</h4>
-                        <p>{cat.averageRating.toFixed(2)} / 5</p>
-                        <p style={{ fontSize: '0.85rem', color: '#666' }}>{cat.totalResponses} responses</p>
+                      <div key={cat._id} className="text-center">
+                        <p className="text-xl font-bold text-gray-900">{cat.averageRating.toFixed(1)}</p>
+                        <p className="text-xs text-gray-500 capitalize">{cat._id}</p>
+                        <p className="text-xs text-gray-400">{cat.totalResponses} reviews</p>
                       </div>
                     ))}
                   </div>
                 </div>
-              )}
+              </div>
+            </div>
+          )}
 
-              <h3>All Feedback</h3>
-              <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} style={{ marginBottom: '1rem' }}>
-                <option value="">All categories</option>
-                <option value="mess">Mess</option>
-                <option value="facilities">Facilities</option>
-                <option value="staff">Staff</option>
-                <option value="general">General</option>
-              </select>
+          <div className="flex items-center gap-3 mb-4">
+            <FiFilter size={14} className="text-gray-400" />
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary bg-white"
+            >
+              <option value="">All categories</option>
+              <option value="mess">Mess</option>
+              <option value="facilities">Facilities</option>
+              <option value="staff">Staff</option>
+              <option value="general">General</option>
+            </select>
+          </div>
 
-              {feedbackList.length === 0 ? <p>No feedback found.</p> : (
-                <table border="1" cellPadding="8">
+          {feedbackList.length === 0 ? (
+            <EmptyState title="No feedback found" icon={FiMessageSquare} />
+          ) : (
+            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-card">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
                   <thead>
-                    <tr><th>Student</th><th>Category</th><th>Rating</th><th>Comments</th><th>Date</th></tr>
+                    <tr className="bg-gray-50 border-b border-gray-200">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Student</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Rating</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Comments</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                    </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-gray-100">
                     {feedbackList.map(f => (
-                      <tr key={f._id}>
-                        <td>{f.student.name} ({f.student.studentId})</td>
-                        <td>{f.category}</td>
-                        <td>{renderStars(f.rating)}</td>
-                        <td>{f.comments || '—'}</td>
-                        <td>{new Date(f.createdAt).toLocaleDateString()}</td>
+                      <tr key={f._id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2.5">
+                            <Avatar name={f.student.name} size="sm" />
+                            <div>
+                              <p className="font-medium text-gray-900">{f.student.name}</p>
+                              <p className="text-xs text-gray-400">{f.student.studentId}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-gray-600 capitalize">{f.category}</td>
+                        <td className="px-4 py-3"><StarDisplay rating={f.rating} /></td>
+                        <td className="px-4 py-3 text-gray-500 max-w-xs">
+                          <p className="truncate">{f.comments || '—'}</p>
+                        </td>
+                        <td className="px-4 py-3 text-gray-400 text-xs">{new Date(f.createdAt).toLocaleDateString()}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-              )}
-            </>
+              </div>
+            </div>
           )}
-        </main>
-      </div>
-    </div>
+        </>
+      )}
+    </PageLayout>
   );
 };
 
