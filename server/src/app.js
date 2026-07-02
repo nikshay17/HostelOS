@@ -6,11 +6,35 @@ const hpp = require('hpp');
 const { generalLimiter } = require('./middleware/rateLimiter.middleware');
 
 const app = express();
+const allowedOrigins = (process.env.CLIENT_ORIGIN || process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001,http://localhost:5173,http://127.0.0.1:5173')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 app.use(helmet()); // sets secure HTTP headers
-app.use(cors({
-  origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000', // tightened from wide-open CORS
-  credentials: true
-}));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json({ limit: '10mb' })); // base64 images from face recognition need a higher limit than default
 app.use(mongoSanitize()); // strips $ and . from request data to prevent NoSQL injection
 app.use(hpp()); // protects against HTTP parameter pollution
