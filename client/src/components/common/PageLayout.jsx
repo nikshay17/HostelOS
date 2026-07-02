@@ -2,7 +2,7 @@ import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 
 const PageLayout = ({ children }) => (
-  <div className="flex flex-col h-screen bg-muted">
+  <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
     <Navbar />
     <div className="flex flex-1 overflow-hidden">
       <Sidebar />

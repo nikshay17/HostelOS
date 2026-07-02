@@ -27,13 +27,14 @@ import Broadcast from './pages/admin/Broadcast';
 import SecuritySettings from './pages/admin/SecuritySettings';
 import Landing from './pages/Landing';
 import VerifyOTP from './pages/auth/VerifyOTP';
-
+import { ThemeProvider } from './context/ThemeContext';
 
 
 
 function App() {
   return (
     <AuthProvider>
+      <ThemeProvider>
       <NotificationProvider>
       <BrowserRouter>
         <Routes>
@@ -132,6 +133,7 @@ function App() {
         </Routes>
       </BrowserRouter>
       </NotificationProvider>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

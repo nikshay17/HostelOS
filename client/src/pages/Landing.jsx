@@ -8,6 +8,7 @@ import {
   FiSun, FiMoon
 } from 'react-icons/fi';
 import { LuBuilding2, LuBedDouble } from 'react-icons/lu';
+import { useTheme } from '../context/ThemeContext';
 
 // ─── GLOBAL KEYFRAMES (scoped once, used for scroll-reveal + ambient motion) ──
 const GlobalAnimationStyles = () => (
@@ -71,30 +72,6 @@ const Reveal = ({ children, delay = 0, className = '' }) => {
       {children}
     </div>
   );
-};
-
-// ─── THEME HOOK ───────────────────────────────────────────────────────────────
-const useTheme = () => {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('hostelos-theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const shouldBeDark = stored ? stored === 'dark' : prefersDark;
-    setIsDark(shouldBeDark);
-    document.documentElement.classList.toggle('dark', shouldBeDark);
-  }, []);
-
-  const toggleTheme = () => {
-    setIsDark(prev => {
-      const next = !prev;
-      document.documentElement.classList.toggle('dark', next);
-      localStorage.setItem('hostelos-theme', next ? 'dark' : 'light');
-      return next;
-    });
-  };
-
-  return { isDark, toggleTheme };
 };
 
 // ─── THEME TOGGLE BUTTON ──────────────────────────────────────────────────────
