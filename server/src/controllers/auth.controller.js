@@ -42,20 +42,27 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+
     if (user.status === 'pending') {
-      return res.status(403).json({
-        message: 'Please verify your email before signing in',
-        requiresVerification: true,
-        userId: user._id  // so frontend can redirect to OTP screen
-      });
+      if (user.role === 'student') {
+        return res.status(403).json({
+          message: 'Please verify your email before signing in',
+          requiresVerification: true,
+          userId: user._id  // so frontend can redirect to OTP screen
+        });
+      }
+
+      user.status = 'active';
+      user.otp = undefined;
+      user.otpExpiry = undefined;
+      await user.save();
     }
 
     if (user.status === 'suspended') {
       return res.status(403).json({ message: 'Your account has been suspended. Contact the warden.' });
     }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
     const token = generateToken(user._id, user.role);
     res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
@@ -81,7 +88,10 @@ exports.createStaff = async (req, res) => {
     const user = await User.create({
       name, email, password: hashedPassword, role,
       employeeId, designation, department, phone,
-      createdBy: req.user.id
+      createdBy: req.user.id,
+      status: 'active',
+      otp: undefined,
+      otpExpiry: undefined
     });
 
     const recordAudit = require('../utils/auditLog');

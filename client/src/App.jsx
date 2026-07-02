@@ -42,19 +42,19 @@ function App() {
 
           // student, admin, and warden routes are protected based on user roles
           <Route path="/student" element={
-            <ProtectedRoute allowedRole="student"><StudentDashboard /></ProtectedRoute>
+            <ProtectedRoute allowedRoles={['student']}><StudentDashboard /></ProtectedRoute>
           } />
 
           <Route path="/admin" element={
-            <ProtectedRoute allowedRole="admin"><AdminDashboard /></ProtectedRoute>
+            <ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>
           } />
 
           <Route path="/warden" element={
-            <ProtectedRoute allowedRole="warden"><WardenDashboard /></ProtectedRoute>
+            <ProtectedRoute allowedRoles={['warden']}><WardenDashboard /></ProtectedRoute>
           } />
 
           <Route path="/admin/create-staff" element={
-            <ProtectedRoute allowedRole="admin"><CreateStaff /></ProtectedRoute>
+            <ProtectedRoute allowedRoles={['admin']}><CreateStaff /></ProtectedRoute>
           } />
 
           <Route path="/student/room-booking" element={

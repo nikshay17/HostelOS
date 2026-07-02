@@ -1,13 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../../services/authService';
-import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/common/Button';
 import ErrorBanner from '../../components/common/ErrorBanner';
 import { LuBuilding2 } from 'react-icons/lu';
 import { FiMail, FiLock, FiUser, FiHash, FiPhone } from 'react-icons/fi';
-
-const ROLE_REDIRECTS = { student: '/student', warden: '/warden', admin: '/admin' };
 
 const Field = ({ label, icon: Icon, ...props }) => (
   <div>
@@ -26,7 +23,6 @@ const Register = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '', studentId: '', roomNumber: '', phone: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -35,10 +31,6 @@ const Register = () => {
     setLoading(true);
     try {
       const res = await registerUser(form);
-      login(res.data.token, res.data.user);
-      navigate(ROLE_REDIRECTS[res.data.user.role] || '/login');
-
-      // With this:
       navigate('/verify-otp', {
         state: {
           userId: res.data.userId,

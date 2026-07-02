@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       getCurrentUser(token)
-        .then(res => setUser(res.data))
+        .then(res => setUser(res.data.user ?? res.data))
         .catch(() => logout())
         .finally(() => setLoading(false));
     } else {

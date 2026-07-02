@@ -21,6 +21,7 @@ const seedAdmin = async () => {
     role: 'admin',
     employeeId: 'ADM001',
     designation: 'Dean',
+    status: 'active'
   });
 
   console.log('First admin created: dean@hostel.edu / ChangeMe123!');

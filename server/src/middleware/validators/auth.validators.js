@@ -5,7 +5,7 @@ exports.registerValidation = [
   body('email').trim().isEmail().withMessage('Valid email is required').normalizeEmail(),
   body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
   body('studentId').trim().notEmpty().withMessage('Student ID is required'),
-  body('phone').optional().isMobilePhone().withMessage('Invalid phone number')
+  body('phone').optional({ checkFalsy: true }).isMobilePhone().withMessage('Invalid phone number')
 ];
 
 exports.loginValidation = [
