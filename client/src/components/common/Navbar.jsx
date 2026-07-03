@@ -78,7 +78,7 @@ const Navbar = () => {
           <LuBuilding2 size={16} className="text-white" />
         </div>
         <span className="font-semibold text-gray-900 dark:text-white hidden sm:block transition-colors duration-300">
-          Hostel Management
+          HostelOS
         </span>
       </div>
 
