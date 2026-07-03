@@ -7,7 +7,7 @@ import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import ErrorBanner from '../../components/common/ErrorBanner';
 import SuccessBanner from '../../components/common/SuccessBanner';
-import { FiUserPlus, FiMail, FiLock, FiHash, FiBriefcase, FiPhone } from 'react-icons/fi';
+import { FiUserPlus, FiMail, FiLock, FiHash, FiBriefcase, FiPhone, FiEye, FiEyeOff } from 'react-icons/fi';
 
 const CreateStaff = () => {
   const { token } = useAuth();
@@ -18,6 +18,7 @@ const CreateStaff = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,15 +37,26 @@ const CreateStaff = () => {
     }
   };
 
-  const Field = ({ label, icon: Icon, ...props }) => (
+  const Field = ({ label, icon: Icon, type = 'text', showPasswordToggle = false, showPassword = false, onTogglePassword, ...props }) => (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-1.5">{label}</label>
       <div className="relative">
         {Icon && <Icon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />}
         <input
-          className={`w-full ${Icon ? 'pl-9' : 'pl-3'} pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors`}
+          type={type}
+          className={`w-full ${Icon ? 'pl-9' : 'pl-3'} ${showPasswordToggle ? 'pr-10' : 'pr-3'} py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors`}
           {...props}
         />
+        {showPasswordToggle && (
+          <button
+            type="button"
+            onClick={onTogglePassword}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+          >
+            {showPassword ? <FiEyeOff size={14} /> : <FiEye size={14} />}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -81,8 +93,8 @@ const CreateStaff = () => {
               onChange={(e) => setForm({ ...form, name: e.target.value })} required />
             <Field label="Email" icon={FiMail} type="email" placeholder="staff@hostel.edu" value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-            <Field label="Password" icon={FiLock} type="password" placeholder="Min. 8 characters" value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })} required />
+            <Field label="Password" icon={FiLock} type={showPassword ? 'text' : 'password'} placeholder="Min. 8 characters" value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })} required showPasswordToggle onTogglePassword={() => setShowPassword((prev) => !prev)} showPassword={showPassword} />
             <Field label="Employee ID" icon={FiHash} placeholder="EMP001" value={form.employeeId}
               onChange={(e) => setForm({ ...form, employeeId: e.target.value })} required />
             <Field label="Designation" icon={FiBriefcase} placeholder="Hostel Warden / Dean" value={form.designation}

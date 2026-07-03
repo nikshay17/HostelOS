@@ -4,17 +4,28 @@ import { registerUser } from '../../services/authService';
 import Button from '../../components/common/Button';
 import ErrorBanner from '../../components/common/ErrorBanner';
 import { LuBuilding2 } from 'react-icons/lu';
-import { FiMail, FiLock, FiUser, FiHash, FiPhone } from 'react-icons/fi';
+import { FiMail, FiLock, FiUser, FiHash, FiPhone, FiEye, FiEyeOff } from 'react-icons/fi';
 
-const Field = ({ label, icon: Icon, ...props }) => (
+const Field = ({ label, icon: Icon, type = 'text', showPasswordToggle = false, showPassword = false, onTogglePassword, ...props }) => (
   <div>
     <label className="block text-sm font-medium text-gray-700 mb-1.5">{label}</label>
     <div className="relative">
       {Icon && <Icon size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />}
       <input
-        className={`w-full ${Icon ? 'pl-9' : 'pl-3'} pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors`}
+        type={type}
+        className={`w-full ${Icon ? 'pl-9' : 'pl-3'} ${showPasswordToggle ? 'pr-10' : 'pr-3'} py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors`}
         {...props}
       />
+      {showPasswordToggle && (
+        <button
+          type="button"
+          onClick={onTogglePassword}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          aria-label={showPassword ? 'Hide password' : 'Show password'}
+        >
+          {showPassword ? <FiEyeOff size={15} /> : <FiEye size={15} />}
+        </button>
+      )}
     </div>
   </div>
 );
@@ -23,6 +34,7 @@ const Register = () => {
   const [form, setForm] = useState({ name: '', email: '', password: '', studentId: '', roomNumber: '', phone: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -62,8 +74,8 @@ const Register = () => {
               onChange={(e) => setForm({ ...form, name: e.target.value })} required />
             <Field label="Email" icon={FiMail} type="email" placeholder="you@hostel.edu" value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-            <Field label="Password" icon={FiLock} type="password" placeholder="Min. 8 characters" value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })} required />
+            <Field label="Password" icon={FiLock} type={showPassword ? 'text' : 'password'} placeholder="Min. 8 characters" value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })} required showPasswordToggle onTogglePassword={() => setShowPassword((prev) => !prev)} showPassword={showPassword} />
             <Field label="Student ID" icon={FiHash} placeholder="S001" value={form.studentId}
               onChange={(e) => setForm({ ...form, studentId: e.target.value })} required />
             <Field label="Room Number" icon={FiHash} placeholder="A101 (optional)" value={form.roomNumber}
