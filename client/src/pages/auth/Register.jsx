@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../../services/authService';
 import Button from '../../components/common/Button';
 import ErrorBanner from '../../components/common/ErrorBanner';
-import { LuBuilding2 } from 'react-icons/lu';
+import HostelLogo from '../../components/common/HostelLogo';
 import { FiMail, FiLock, FiUser, FiHash, FiPhone, FiEye, FiEyeOff } from 'react-icons/fi';
 
 const Field = ({ label, icon: Icon, type = 'text', showPasswordToggle = false, showPassword = false, onTogglePassword, ...props }) => (
@@ -59,8 +59,8 @@ const Register = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="inline-flex p-3 bg-primary rounded-2xl mb-4">
-            <LuBuilding2 size={28} className="text-white" />
+          <div className="inline-flex p-1.5 bg-white rounded-2xl mb-4 shadow-sm border border-gray-200">
+            <HostelLogo size={52} showText={false} wrapperClassName="" imageClassName="rounded-xl" />
           </div>
           <h1 className="text-2xl font-semibold text-gray-900">Create your account</h1>
           <p className="text-sm text-gray-500 mt-1">Student registration</p>

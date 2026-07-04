@@ -90,12 +90,14 @@ const ManageComplaints = () => {
           {complaints.map(c => (
             <div key={c._id} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-5 shadow-card">
               <div className="flex items-start gap-3 mb-3">
-                <Avatar name={c.student.name} size="sm" />
+                <Avatar name={c.student?.name || 'Unknown'} size="sm" />
                 <div className="flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-semibold text-gray-900 dark:text-white">{c.student.name}</span>
-                    <span className="text-xs text-gray-400 dark:text-gray-500">({c.student.studentId})</span>
-                    {c.student.roomNumber && (
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">{c.student?.name || 'Unknown student'}</span>
+                    {c.student?.studentId && (
+                      <span className="text-xs text-gray-400 dark:text-gray-500">({c.student.studentId})</span>
+                    )}
+                    {c.student?.roomNumber && (
                       <span className="text-xs text-gray-400 dark:text-gray-500">· Room {c.student.roomNumber}</span>
                     )}
                     <Badge status={c.status} />
@@ -139,7 +141,7 @@ const ManageComplaints = () => {
               )}
               {c.status === 'resolved' && c.resolvedBy && (
                 <p className="text-xs text-gray-400 border-t border-gray-100 pt-2 mt-2">
-                  Resolved by {c.resolvedBy.name}
+                  Resolved by {c.resolvedBy?.name || 'Unknown'}
                   {c.resolutionNotes && ` · "${c.resolutionNotes}"`}
                 </p>
               )}

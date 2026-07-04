@@ -1,4 +1,3 @@
-// client/src/pages/Landing.jsx
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import {
@@ -8,6 +7,7 @@ import {
   FiSun, FiMoon
 } from 'react-icons/fi';
 import { LuBuilding2, LuBedDouble } from 'react-icons/lu';
+import HostelLogo from '../components/common/HostelLogo';
 import { useTheme } from '../context/ThemeContext';
 
 // ─── GLOBAL KEYFRAMES (scoped once, used for scroll-reveal + ambient motion) ──
@@ -93,7 +93,6 @@ const ThemeToggle = ({ isDark, toggleTheme, className = '' }) => (
 );
 
 // ─── IMAGE PLACEHOLDER COMPONENT ─────────────────────────────────────────────
-// Replace src="" with your actual image URL wherever you see <ImagePlaceholder />
 const ImagePlaceholder = ({ src = '', alt = '', className = '', overlay = false }) => (
   <div className={`relative overflow-hidden bg-gray-200 dark:bg-gray-800 ${className}`}>
     {src ? (
@@ -130,19 +129,10 @@ const LandingNav = ({ isDark, toggleTheme }) => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-950/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm transition-colors duration-300">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-2.5 group cursor-pointer">
-          <div className="w-8 h-8 rounded-lg overflow-hidden bg-primary flex items-center justify-center transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3">
-            <ImagePlaceholder
-              src="" // Add your logo image URL here
-              alt="HostelOS Logo"
-              className="w-8 h-8"
-            />
-          </div>
-
-          <span className="font-bold text-gray-900 dark:text-white text-lg transition-colors duration-300">
-            HostelOS
-          </span>
-        </div>
+        <HostelLogo
+          size={32}
+          textClassName="font-bold text-gray-900 dark:text-white text-lg transition-colors duration-300"
+        />
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
@@ -235,10 +225,10 @@ const Hero = () => (
   <section className="pt-16 min-h-screen flex flex-col">
     {/* Main hero with background image */}
     <div className="relative flex-1 flex items-center">
-      {/* Background image — replace src with your hostel building photo */}
+      {/* Background image */}
       <div className="absolute inset-0">
         <ImagePlaceholder
-          src="" // <-- Add hostel exterior/campus photo URL here (recommended: wide shot of hostel building)
+          src="https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b?fm=jpg&q=80&w=2400&auto=format&fit=crop"
           alt="Hostel building"
           className="w-full h-full"
           overlay={true}
@@ -299,7 +289,7 @@ const FEATURES = [
     icon: LuBedDouble,
     title: 'Room Booking',
     description: 'Browse available rooms, submit requests online. Wardens approve with one click and occupancy updates instantly.',
-    imageSrc: '', // <-- Add room interior photo URL here
+    imageSrc: 'https://images.unsplash.com/photo-1520277739336-7bf67edfa768?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Hostel room',
     color: 'text-primary',
     bg: 'bg-primary-light',
@@ -308,7 +298,7 @@ const FEATURES = [
     icon: FiCreditCard,
     title: 'Mess Bills',
     description: 'Monthly bills auto-generated for all students. Pay online, track balance, view payment history.',
-    imageSrc: '', // <-- Add mess/dining hall photo URL here
+    imageSrc: 'https://images.unsplash.com/photo-1698844035759-099a24409d93?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Hostel mess',
     color: 'text-success',
     bg: 'bg-success-light',
@@ -317,7 +307,7 @@ const FEATURES = [
     icon: FiLogOut,
     title: 'Gate Pass + QR',
     description: 'Request outings digitally. Get a QR code on approval, scanned by security on your return.',
-    imageSrc: '', // <-- Add gate/entrance photo URL here
+    imageSrc: 'https://images.unsplash.com/photo-1576495199011-eb94736d05d6?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Hostel gate',
     color: 'text-warning',
     bg: 'bg-warning-light',
@@ -326,7 +316,7 @@ const FEATURES = [
     icon: FiCalendar,
     title: 'Attendance',
     description: 'GPS-verified daily check-in. Optional face recognition for biometric confirmation.',
-    imageSrc: '', // <-- Add campus/courtyard photo URL here
+    imageSrc: 'https://images.unsplash.com/photo-1592280771190-3e2e4d571952?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Attendance',
     color: 'text-primary',
     bg: 'bg-primary-light',
@@ -335,7 +325,7 @@ const FEATURES = [
     icon: FiShield,
     title: 'Face Recognition',
     description: 'Enroll your face once. Use your webcam for biometric verification during attendance.',
-    imageSrc: '', // <-- Add face-scan or security photo URL here
+    imageSrc: 'https://images.unsplash.com/photo-1559137771-536eecb999ab?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Face recognition',
     color: 'text-gray-600',
     bg: 'bg-gray-100',
@@ -344,7 +334,7 @@ const FEATURES = [
     icon: FiAlertCircle,
     title: 'Complaints',
     description: 'File complaints by category. Wardens triage, update status, and add resolution notes.',
-    imageSrc: '', // <-- Add hostel corridor/common area photo URL here
+    imageSrc: 'https://images.unsplash.com/photo-1635151925996-cf34cc3805d4?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Complaints',
     color: 'text-danger',
     bg: 'bg-danger-light',
@@ -353,7 +343,7 @@ const FEATURES = [
     icon: FiMessageSquare,
     title: 'Feedback',
     description: 'Rate mess, facilities, and staff. Admins see aggregated scores and trends.',
-    imageSrc: '', // <-- Add dining/facility photo URL here
+    imageSrc: 'https://images.unsplash.com/photo-1577985043696-8bd54d9f093f?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Feedback',
     color: 'text-primary',
     bg: 'bg-primary-light',
@@ -362,7 +352,7 @@ const FEATURES = [
     icon: FiBarChart2,
     title: 'Analytics',
     description: 'Live charts for occupancy, billing, complaints, and attendance across the hostel.',
-    imageSrc: '', // <-- Add dashboard screenshot or analytics photo URL here
+    imageSrc: 'https://ik.imagekit.io/ojg8g9zaf/Dashboard.png', // Updated with ImageKit URL
     imageAlt: 'Analytics',
     color: 'text-success',
     bg: 'bg-success-light',
@@ -437,7 +427,7 @@ const DashboardPreview = () => (
                 'Wardens manage approvals and complaints from a single queue',
                 'Admins get analytics, room management, and staff controls',
               ].map(text => (
-                <div key={text} className="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300 transition-colors duration-300 hover:translate-x-1 duration-200">
+                <div key={text} className="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300 transition-colors duration-300 hover:translate-x-1">
                   <FiCheckCircle size={16} className="text-success shrink-0 mt-0.5" />
                   {text}
                 </div>
@@ -449,12 +439,12 @@ const DashboardPreview = () => (
           </div>
         </Reveal>
 
-        {/* Dashboard screenshot — replace with a real screenshot */}
+        {/* Dashboard screenshot */}
         <Reveal delay={150}>
           <div className="relative group">
             <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-800 transition-transform duration-500 group-hover:scale-[1.02]">
               <ImagePlaceholder
-                src="" // <-- Add dashboard screenshot URL here (recommended: 800x500px screenshot of your admin/student dashboard)
+                src="https://ik.imagekit.io/ojg8g9zaf/Dashboard.png" // Updated with ImageKit URL
                 alt="HostelOS Dashboard"
                 className="w-full h-72 lg:h-96"
               />
@@ -483,28 +473,28 @@ const STEPS = [
     step: '01',
     title: 'Register with your college email',
     description: 'Sign up, get an OTP on your email, verify — takes under 2 minutes. No paperwork.',
-    imageSrc: '', // <-- Add registration screenshot or student with laptop photo URL here
+    imageSrc: 'https://images.unsplash.com/photo-1555930112-0159bcdc3fe5?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Student registering',
   },
   {
     step: '02',
     title: 'Warden activates your account',
     description: 'A warden confirms you\'re a legitimate resident. You\'ll get a notification the moment you\'re cleared.',
-    imageSrc: '', // <-- Add warden reviewing screen photo URL here
+    imageSrc: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Warden verifying',
   },
   {
     step: '03',
     title: 'Book your room',
     description: 'Browse available rooms and submit a request. Warden approves, your dashboard updates instantly.',
-    imageSrc: '', // <-- Add room booking UI screenshot or student choosing room URL here
+    imageSrc: 'https://images.unsplash.com/photo-1531576788337-610fa9c67107?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Room booking',
   },
   {
     step: '04',
     title: 'Use every service from your phone',
     description: 'Pay bills, mark attendance, request gate passes, file complaints — all digital, all tracked.',
-    imageSrc: '', // <-- Add phone/mobile usage photo or app screenshot URL here
+    imageSrc: 'https://images.unsplash.com/photo-1565802526361-b1acaebf0954?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Mobile usage',
   },
 ];
@@ -557,7 +547,7 @@ const ROLES = [
     role: 'Student',
     tagline: 'Your hostel life, simplified',
     description: 'Register, book a room, pay bills, and manage your hostel life entirely from your laptop or phone.',
-    imageSrc: '', // <-- Add student in hostel/studying photo URL here
+    imageSrc: 'https://images.unsplash.com/photo-1565802525957-d818c100d6e8?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Student in hostel',
     capabilities: [
       'Room booking requests',
@@ -577,7 +567,7 @@ const ROLES = [
     role: 'Warden',
     tagline: 'Manage operations effortlessly',
     description: 'Your entire workflow — approvals, complaints, attendance — in one clean dashboard. No more paper registers.',
-    imageSrc: '', // <-- Add warden/staff at desk photo URL here
+    imageSrc: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Warden managing hostel',
     capabilities: [
       'Approve / reject bookings',
@@ -597,7 +587,7 @@ const ROLES = [
     role: 'Admin',
     tagline: 'Full oversight, zero guesswork',
     description: 'See every metric, manage the room inventory, generate bills, and provision staff accounts — all from one dashboard.',
-    imageSrc: '', // <-- Add admin/dean at computer photo URL here
+    imageSrc: 'https://images.unsplash.com/photo-1559137771-536eecb999ab?fm=jpg&q=80&w=1200&auto=format&fit=crop',
     imageAlt: 'Admin overview',
     capabilities: [
       'Room inventory management',
@@ -687,22 +677,21 @@ const SocialProof = () => (
       </Reveal>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Photo cards — replace image URLs with real hostel photos */}
         {[
           {
-            imageSrc: '', // <-- Add hostel common room photo URL here
+            imageSrc: 'https://images.unsplash.com/photo-1619512673224-91cfb2688284?fm=jpg&q=80&w=1200&auto=format&fit=crop',
             imageAlt: 'Students in common room',
             quote: 'No more standing in queues to book a room or submit a complaint. Everything is just a click away.',
             name: 'Student, Batch 2024',
           },
           {
-            imageSrc: '', // <-- Add hostel corridor photo URL here
+            imageSrc: 'https://images.unsplash.com/photo-1635728153590-f9c4f75cf78d?fm=jpg&q=80&w=1200&auto=format&fit=crop',
             imageAlt: 'Hostel corridor',
             quote: 'Managing 300+ students used to take hours. The dashboard cut my daily admin work in half.',
             name: 'Hostel Warden',
           },
           {
-            imageSrc: '', // <-- Add admin/office photo URL here
+            imageSrc: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?fm=jpg&q=80&w=1200&auto=format&fit=crop',
             imageAlt: 'Admin office',
             quote: 'The audit trail and analytics give me real visibility into hostel operations for the first time.',
             name: 'Dean of Student Affairs',
@@ -737,7 +726,7 @@ const CTA = () => (
         <div className="relative rounded-3xl overflow-hidden group">
           {/* Background image */}
           <ImagePlaceholder
-            src="" // <-- Add a wide hostel building / campus aerial photo URL here
+            src="https://images.unsplash.com/photo-1583373834259-46cc92173cb7?fm=jpg&q=80&w=2400&auto=format&fit=crop"
             alt="Hostel campus"
             className="absolute inset-0 w-full h-full transition-transform duration-700 group-hover:scale-105"
           />
@@ -774,10 +763,10 @@ const Footer = () => (
       <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-10">
         <div className="max-w-xs">
           <div className="flex items-center gap-2.5 mb-3 group cursor-pointer w-fit">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-              <LuBuilding2 size={16} className="text-white" />
-            </div>
-            <span className="font-bold text-white text-lg">HostelOS</span>
+            <HostelLogo
+              size={32}
+              textClassName="font-bold text-white text-lg"
+            />
           </div>
           <p className="text-gray-400 text-sm leading-relaxed">
             A complete digital hostel management system for modern college hostels.
@@ -813,7 +802,7 @@ const Footer = () => (
       </div>
 
       <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-gray-500">
-        <p>© 2026 HostelOS. Built as a college minor project.</p>
+        <p>© 2026 HostelOS.</p>
         <div className="flex items-center gap-4">
           <Link to="/login" className="hover:text-white transition-colors duration-200">Sign in</Link>
           <Link to="/register" className="hover:text-white transition-colors duration-200">Register</Link>

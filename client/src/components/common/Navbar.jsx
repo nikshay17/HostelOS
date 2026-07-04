@@ -57,7 +57,7 @@ import ThemeToggle from './ThemeToggle';
 import Button from './Button';
 import Avatar from './Avatar';
 import { FiLogOut } from 'react-icons/fi';
-import { LuBuilding2 } from 'react-icons/lu';
+import HostelLogo from './HostelLogo';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -73,14 +73,10 @@ const Navbar = () => {
       transition-colors duration-300
     ">
       {/* Logo */}
-      <div className="flex items-center gap-2.5">
-        <div className="p-1.5 bg-primary rounded-lg">
-          <LuBuilding2 size={16} className="text-white" />
-        </div>
-        <span className="font-semibold text-gray-900 dark:text-white hidden sm:block transition-colors duration-300">
-          HostelOS
-        </span>
-      </div>
+      <HostelLogo
+        size={32}
+        textClassName="font-semibold text-gray-900 dark:text-white hidden sm:block transition-colors duration-300"
+      />
 
       {user && (
         <div className="flex items-center gap-2">

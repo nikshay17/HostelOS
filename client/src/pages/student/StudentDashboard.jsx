@@ -67,7 +67,7 @@ const StudentDashboard = () => {
           {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
         </p>
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
-          {greeting}, {user?.name?.split(' ')[0]} 👋
+          {greeting}, {user?.name?.split(' ')[0]} 
         </h2>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 transition-colors duration-300">
           Here's your hostel summary for today
