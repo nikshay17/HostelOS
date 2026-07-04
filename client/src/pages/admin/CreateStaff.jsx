@@ -9,6 +9,30 @@ import ErrorBanner from '../../components/common/ErrorBanner';
 import SuccessBanner from '../../components/common/SuccessBanner';
 import { FiUserPlus, FiMail, FiLock, FiHash, FiBriefcase, FiPhone, FiEye, FiEyeOff } from 'react-icons/fi';
 
+const Field = ({ label, icon: Icon, type = 'text', showPasswordToggle = false, showPassword = false, onTogglePassword, ...props }) => (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{label}</label>
+    <div className="relative">
+      {Icon && <Icon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />}
+      <input
+        type={type}
+        className={`w-full ${Icon ? 'pl-9' : 'pl-3'} ${showPasswordToggle ? 'pr-10' : 'pr-3'} py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors`}
+        {...props}
+      />
+      {showPasswordToggle && (
+        <button
+          type="button"
+          onClick={onTogglePassword}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          aria-label={showPassword ? 'Hide password' : 'Show password'}
+        >
+          {showPassword ? <FiEyeOff size={14} /> : <FiEye size={14} />}
+        </button>
+      )}
+    </div>
+  </div>
+);
+
 const CreateStaff = () => {
   const { token } = useAuth();
   const [form, setForm] = useState({
@@ -36,30 +60,6 @@ const CreateStaff = () => {
       setSubmitting(false);
     }
   };
-
-  const Field = ({ label, icon: Icon, type = 'text', showPasswordToggle = false, showPassword = false, onTogglePassword, ...props }) => (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{label}</label>
-      <div className="relative">
-        {Icon && <Icon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />}
-        <input
-          type={type}
-          className={`w-full ${Icon ? 'pl-9' : 'pl-3'} ${showPasswordToggle ? 'pr-10' : 'pr-3'} py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors`}
-          {...props}
-        />
-        {showPasswordToggle && (
-          <button
-            type="button"
-            onClick={onTogglePassword}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
-          >
-            {showPassword ? <FiEyeOff size={14} /> : <FiEye size={14} />}
-          </button>
-        )}
-      </div>
-    </div>
-  );
 
   return (
     <PageLayout>
