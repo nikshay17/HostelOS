@@ -32,6 +32,8 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization']
 };
 
+app.set("trust proxy", 1); // trust first proxy for rate limiting
+
 app.use(helmet()); // sets secure HTTP headers
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
@@ -63,6 +65,6 @@ app.use(require('./middleware/error.middleware'));
 app.use('/complaints', require('./routes/complaint.routes'));
 
 app.use('/analytics', require('./routes/analytics.routes'));
-module.exports = app;
-
 app.use('/security', require('./routes/security.routes'));
+
+module.exports = app;
