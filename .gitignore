@@ -7,3 +7,4 @@ encodings/*.pkl
 python-service/venv/
 logs/
 
+.env.pro
