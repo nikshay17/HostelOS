@@ -52,13 +52,13 @@ const Broadcast = () => {
         <Card className="p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Notification Type</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Notification Type</label>
               <div className="flex items-center gap-3">
                 {['info', 'warning', 'alert'].map(type => (
                   <label
                     key={type}
                     className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium cursor-pointer transition-colors capitalize
-                      ${form.type === type ? TYPE_STYLES[type] + ' border-current' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                      ${form.type === type ? TYPE_STYLES[type] + ' border-current' : 'border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                   >
                     <input
                       type="radio"
@@ -74,7 +74,7 @@ const Broadcast = () => {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Title</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Title</label>
               <input
                 placeholder="e.g. Water Supply Interruption"
                 value={form.title}
@@ -84,7 +84,7 @@ const Broadcast = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Message</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Message</label>
               <textarea
                 placeholder="Write your announcement here..."
                 value={form.message}
@@ -99,7 +99,7 @@ const Broadcast = () => {
                 <FiBell size={13} />
                 <span className="text-xs font-semibold">{form.title || 'Notification Preview'}</span>
               </div>
-              <p className="text-xs text-gray-500">{form.message || 'Your message will appear here...'}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{form.message || 'Your message will appear here...'}</p>
             </div>
             <Button type="submit" loading={sending} className="w-full" iconLeft={<FiSend size={13} />}>
               Send to All Students

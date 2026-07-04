@@ -88,24 +88,24 @@ const RoomBooking = () => {
                 icon={LuBedDouble}
               />
             ) : (
-              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-card">
+              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-card">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-gray-50 border-b border-gray-200">
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Room</th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Floor</th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
+                      <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Room</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Type</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Floor</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {myBookings.map(b => (
-                        <tr key={b._id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-4 py-3 font-medium text-gray-900">{b.room.roomNumber}</td>
-                          <td className="px-4 py-3 text-gray-500 capitalize">{b.room.type}</td>
-                          <td className="px-4 py-3 text-gray-500">Floor {b.room.floor}</td>
+                        <tr key={b._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                          <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{b.room.roomNumber}</td>
+                          <td className="px-4 py-3 text-gray-500 dark:text-gray-400 capitalize">{b.room.type}</td>
+                          <td className="px-4 py-3 text-gray-500 dark:text-gray-400">Floor {b.room.floor}</td>
                           <td className="px-4 py-3"><Badge status={b.status} /></td>
                           <td className="px-4 py-3">
                             {b.status === 'pending' && (
@@ -134,12 +134,12 @@ const RoomBooking = () => {
                 <Card key={room._id} className="p-5">
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <p className="text-base font-semibold text-gray-900">{room.roomNumber}</p>
-                      <p className="text-sm text-gray-500 capitalize mt-0.5">{room.type} · Floor {room.floor}</p>
+                      <p className="text-base font-semibold text-gray-900 dark:text-white">{room.roomNumber}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 capitalize mt-0.5">{room.type} · Floor {room.floor}</p>
                     </div>
                     <Badge status={room.status} />
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                  <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
                     <span className="flex items-center gap-1.5">
                       <FiUsers size={13} />
                       {room.occupants.length}/{room.capacity} occupied

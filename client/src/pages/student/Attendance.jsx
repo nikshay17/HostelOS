@@ -86,7 +86,7 @@ const Attendance = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <Card className="p-5 lg:col-span-2">
-          <p className="text-base font-semibold text-gray-900 mb-4">Mark Today's Attendance</p>
+          <p className="text-base font-semibold text-gray-900 dark:text-white mb-4">Mark Today's Attendance</p>
           <div className="space-y-3">
             {!faceVerified ? (
               <div>
@@ -121,13 +121,13 @@ const Attendance = () => {
         </Card>
 
         <Card className="p-5">
-          <p className="text-base font-semibold text-gray-900 mb-1">This Month</p>
-          <p className="text-sm text-gray-400 mb-4">Attendance summary</p>
+          <p className="text-base font-semibold text-gray-900 dark:text-white mb-1">This Month</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mb-4">Attendance summary</p>
           <div className="space-y-2">
             {['present', 'absent', 'late'].map(status => (
               <div key={status} className="flex items-center justify-between">
                 <Badge status={status} />
-                <span className="text-sm font-semibold text-gray-900">
+                <span className="text-sm font-semibold text-gray-900 dark:text-white">
                   {records.filter(r => r.status === status).length}
                 </span>
               </div>
@@ -136,33 +136,33 @@ const Attendance = () => {
         </Card>
       </div>
 
-      <p className="text-base font-semibold text-gray-900 mb-3">Attendance History</p>
+      <p className="text-base font-semibold text-gray-900 dark:text-white mb-3">Attendance History</p>
       {loading ? <Loader /> : records.length === 0 ? (
         <EmptyState title="No attendance records" description="Your check-in history will appear here" icon={FiCalendar} />
       ) : (
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-card">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-card">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Face Verified</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Time</th>
+                <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Face Verified</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Time</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {records.map(r => (
-                  <tr key={r._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900">{new Date(r.date).toLocaleDateString()}</td>
+                  <tr key={r._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{new Date(r.date).toLocaleDateString()}</td>
                     <td className="px-4 py-3"><Badge status={r.status} /></td>
                     <td className="px-4 py-3">
                       {r.verifiedByFace
                         ? <span className="text-success text-xs font-medium flex items-center gap-1"><FiCheckCircle size={12} /> Verified</span>
-                        : <span className="text-gray-400 text-xs">Not verified</span>
+                        : <span className="text-gray-400 dark:text-gray-500 text-xs">Not verified</span>
                       }
                     </td>
-                    <td className="px-4 py-3 text-gray-500">{new Date(r.date).toLocaleTimeString()}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{new Date(r.date).toLocaleTimeString()}</td>
                   </tr>
                 ))}
               </tbody>

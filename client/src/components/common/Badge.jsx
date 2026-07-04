@@ -20,7 +20,7 @@ const STYLES = {
   cancelled:   'bg-danger-light text-danger-dark',
   full:        'bg-danger-light text-danger-dark',
   // Neutral
-  open:        'bg-gray-100 text-gray-600',
+  open:        'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300',
   info:        'bg-primary-light text-primary-dark',
 };
 
@@ -28,7 +28,7 @@ const Badge = ({ status, className = '' }) => (
   <span className={`
     inline-flex items-center px-2.5 py-0.5
     rounded-full text-xs font-semibold capitalize
-    ${STYLES[status] || 'bg-gray-100 text-gray-600'}
+    ${STYLES[status] || 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'}
     ${className}
   `}>
     {status?.replace('-', ' ')}

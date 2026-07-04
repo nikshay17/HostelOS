@@ -54,14 +54,14 @@ const ManageComplaints = () => {
     }
   };
 
-  const selectClass = "px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary bg-white";
+  const selectClass = "px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white";
 
   return (
     <PageLayout>
       <PageHeader
         title="Manage Complaints"
         description="Review and resolve student complaints"
-        actions={<span className="text-sm text-gray-500">{complaints.length} complaints</span>}
+        actions={<span className="text-sm text-gray-500 dark:text-gray-400">{complaints.length} complaints</span>}
       />
       <ErrorBanner message={error} />
       <SuccessBanner message={message} />
@@ -88,21 +88,21 @@ const ManageComplaints = () => {
       ) : (
         <div className="space-y-3">
           {complaints.map(c => (
-            <div key={c._id} className="bg-white border border-gray-200 rounded-xl p-5 shadow-card">
+            <div key={c._id} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-5 shadow-card">
               <div className="flex items-start gap-3 mb-3">
                 <Avatar name={c.student.name} size="sm" />
                 <div className="flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-semibold text-gray-900">{c.student.name}</span>
-                    <span className="text-xs text-gray-400">({c.student.studentId})</span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">{c.student.name}</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500">({c.student.studentId})</span>
                     {c.student.roomNumber && (
-                      <span className="text-xs text-gray-400">· Room {c.student.roomNumber}</span>
+                      <span className="text-xs text-gray-400 dark:text-gray-500">· Room {c.student.roomNumber}</span>
                     )}
                     <Badge status={c.status} />
-                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full capitalize">{c.category}</span>
+                    <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded-full capitalize">{c.category}</span>
                   </div>
-                  <p className="text-sm text-gray-600 mt-1.5">{c.description}</p>
-                  <p className="text-xs text-gray-400 mt-1">{new Date(c.createdAt).toLocaleString()}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1.5">{c.description}</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{new Date(c.createdAt).toLocaleString()}</p>
                 </div>
               </div>
 

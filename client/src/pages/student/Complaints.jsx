@@ -72,11 +72,11 @@ const Complaints = () => {
         <SectionHeader title="File a New Complaint" description="Describe your issue clearly" />
         <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Category</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Category</label>
             <select
               value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
             >
               <option value="maintenance">Maintenance</option>
               <option value="mess">Mess</option>
@@ -85,14 +85,14 @@ const Complaints = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
             <textarea
               placeholder="Describe your issue in detail..."
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               required
               rows={4}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors resize-none"
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors resize-none bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
             />
           </div>
           <Button type="submit" loading={submitting} iconLeft={<FiSend size={13} />}>
@@ -111,16 +111,16 @@ const Complaints = () => {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-semibold text-gray-900 capitalize">{c.category}</span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white capitalize">{c.category}</span>
                     <Badge status={c.status} />
                   </div>
-                  <p className="text-sm text-gray-500">{c.description}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{c.description}</p>
                   {c.resolutionNotes && (
                     <div className="mt-2 p-2.5 bg-success-light rounded-lg">
                       <p className="text-xs text-success-dark font-medium">Resolution: {c.resolutionNotes}</p>
                     </div>
                   )}
-                  <p className="text-xs text-gray-400 mt-2">{new Date(c.createdAt).toLocaleDateString()}</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{new Date(c.createdAt).toLocaleDateString()}</p>
                 </div>
                 {c.status === 'open' && (
                   <Button
