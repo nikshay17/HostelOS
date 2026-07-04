@@ -1,7 +1,8 @@
 const bcrypt = require('bcryptjs');
-const User = require('../models/User.model');
-const generateToken = require('../utils/generateToken');
 const crypto = require('crypto');
+const User = require('../models/User.model');
+const PendingRegistration = require('../models/PendingRegistration.model');
+const generateToken = require('../utils/generateToken');
 const { sendOTPEmail } = require('../utils/mailer');
 
 // PUBLIC — students only
@@ -9,27 +10,41 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, studentId, roomNumber, phone } = req.body;
 
+    // Check if a real user already exists with this email
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: 'Email already registered' });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already registered' });
+    }
 
+    // Check if there is already a pending registration for this email
+    // (e.g. user registered but didn't verify yet — overwrite it with fresh OTP)
+    await PendingRegistration.deleteOne({ email });
+
+    // Hash password now so it's ready to use after OTP verification
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Generate 6-digit OTP
     const otp = crypto.randomInt(100000, 999999).toString();
     const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    const user = await User.create({
-      name, email, password: hashedPassword,
-      role: 'student', studentId, roomNumber, phone,
-      otp, otpExpiry,
-      status: 'pending' // account locked until OTP verified
+    // Store everything in the temp collection — NOT in users
+    const pending = await PendingRegistration.create({
+      name,
+      email,
+      password: hashedPassword,
+      studentId,
+      roomNumber: roomNumber || '',
+      phone: phone || '',
+      otp,
+      otpExpiry,
     });
 
+    // Send OTP email
     await sendOTPEmail({ to: email, name, otp });
 
     res.status(201).json({
-      message: 'Registration successful. Check your email for the verification OTP.',
-      userId: user._id, // needed by the frontend to call /verify-otp
+      message: 'OTP sent to your email. Please verify within 10 minutes.',
+      pendingId: pending._id, // frontend uses this to call /verify-otp
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -42,30 +57,29 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
-
+    // This should never happen now since we only create users after OTP
+    // but kept as a safety net for any legacy 'pending' accounts
     if (user.status === 'pending') {
-      if (user.role === 'student') {
-        return res.status(403).json({
-          message: 'Please verify your email before signing in',
-          requiresVerification: true,
-          userId: user._id  // so frontend can redirect to OTP screen
-        });
-      }
-
-      user.status = 'active';
-      user.otp = undefined;
-      user.otpExpiry = undefined;
-      await user.save();
+      return res.status(403).json({
+        message: 'Please verify your email before signing in',
+        requiresVerification: true,
+      });
     }
 
     if (user.status === 'suspended') {
-      return res.status(403).json({ message: 'Your account has been suspended. Contact the warden.' });
+      return res.status(403).json({
+        message: 'Your account has been suspended. Contact the warden.'
+      });
     }
 
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+
     const token = generateToken(user._id, user.role);
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    res.json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -88,93 +102,113 @@ exports.createStaff = async (req, res) => {
     const user = await User.create({
       name, email, password: hashedPassword, role,
       employeeId, designation, department, phone,
+      status: 'active', // staff accounts are active immediately
       createdBy: req.user.id,
-      status: 'active',
-      otp: undefined,
-      otpExpiry: undefined
     });
 
     const recordAudit = require('../utils/auditLog');
-
     await recordAudit({
       req,
       action: 'CREATE_STAFF',
       targetType: 'User',
       targetId: user._id,
-      details: { role, email }
+      details: { role, email },
     });
 
     res.status(201).json({
       message: `${role} account created successfully`,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
+
 exports.verifyOTP = async (req, res) => {
   try {
-    const { userId, otp } = req.body;
+    const { pendingId, otp } = req.body;
 
-    if (!userId || !otp) {
-      return res.status(400).json({ message: 'userId and otp are required' });
+    if (!pendingId || !otp) {
+      return res.status(400).json({ message: 'pendingId and otp are required' });
     }
 
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-
-    if (user.status === 'active') {
-      return res.status(400).json({ message: 'Account already verified' });
+    // Find the temp record
+    const pending = await PendingRegistration.findById(pendingId);
+    if (!pending) {
+      return res.status(404).json({
+        message: 'Registration session not found or expired. Please register again.'
+      });
     }
 
-    if (!user.otp || !user.otpExpiry) {
-      return res.status(400).json({ message: 'No OTP found. Please register again.' });
+    // Check expiry
+    if (new Date() > pending.otpExpiry) {
+      await PendingRegistration.findByIdAndDelete(pendingId);
+      return res.status(400).json({
+        message: 'OTP has expired. Please register again.'
+      });
     }
 
-    if (new Date() > user.otpExpiry) {
-      return res.status(400).json({ message: 'OTP has expired. Please request a new one.' });
+    // Check OTP
+    if (pending.otp !== otp.trim()) {
+      return res.status(400).json({ message: 'Invalid OTP. Please try again.' });
     }
 
-    if (user.otp !== otp.trim()) {
-      return res.status(400).json({ message: 'Invalid OTP' });
-    }
+    // ✅ OTP verified — now create the actual user in the database
+    const user = await User.create({
+      name:       pending.name,
+      email:      pending.email,
+      password:   pending.password, // already hashed
+      role:       'student',
+      studentId:  pending.studentId,
+      roomNumber: pending.roomNumber,
+      phone:      pending.phone,
+      status:     'active', // active immediately — OTP already proved identity
+    });
 
-    // Activate the account and clear OTP
-    user.status = 'active';
-    user.otp = undefined;
-    user.otpExpiry = undefined;
-    await user.save();
+    // Clean up the temp record
+    await PendingRegistration.findByIdAndDelete(pendingId);
 
+    // Return token — user is now fully registered and logged in
     const token = generateToken(user._id, user.role);
-
-    res.json({
-      message: 'Email verified successfully. Welcome to HostelOS!',
+    res.status(201).json({
+      message: 'Email verified. Welcome to HostelOS!',
       token,
-      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+      user: {
+        id:    user._id,
+        name:  user.name,
+        email: user.email,
+        role:  user.role,
+      },
     });
   } catch (err) {
+    // Handle duplicate studentId/email race condition
+    if (err.code === 11000) {
+      return res.status(400).json({ message: 'Email or Student ID already registered.' });
+    }
     res.status(500).json({ message: err.message });
   }
 };
 
 exports.resendOTP = async (req, res) => {
   try {
-    const { userId } = req.body;
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    if (user.status === 'active') {
-      return res.status(400).json({ message: 'Account already verified' });
+    const { pendingId } = req.body;
+
+    const pending = await PendingRegistration.findById(pendingId);
+    if (!pending) {
+      return res.status(404).json({
+        message: 'Registration session not found or expired. Please register again.'
+      });
     }
 
     const otp = crypto.randomInt(100000, 999999).toString();
     const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
 
-    user.otp = otp;
-    user.otpExpiry = otpExpiry;
-    await user.save();
+    pending.otp = otp;
+    pending.otpExpiry = otpExpiry;
+    await pending.save();
 
-    await sendOTPEmail({ to: user.email, name: user.name, otp });
+    await sendOTPEmail({ to: pending.email, name: pending.name, otp });
 
     res.json({ message: 'New OTP sent to your email' });
   } catch (err) {
@@ -185,22 +219,10 @@ exports.resendOTP = async (req, res) => {
 
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select(
-      '-password -otp -otpExpiry'
-    );
-
-    if (!user) {
-      return res.status(404).json({
-        message: 'User not found',
-      });
-    }
-
-    res.json({
-      user,
-    });
+    const user = await User.findById(req.user.id).select('-password -otp -otpExpiry');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
   } catch (err) {
-    res.status(500).json({
-      message: err.message,
-    });
+    res.status(500).json({ message: err.message });
   }
 };
