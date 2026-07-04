@@ -15,8 +15,8 @@ const VerifyOTP = () => {
   const location = useLocation();
   const { login } = useAuth();
 
-  // userId is passed via navigation state from Register page
-  const userId = location.state?.userId;
+  // pendingId is passed via navigation state from the registration flow
+  const pendingId = location.state?.pendingId ?? location.state?.userId;
   const email = location.state?.email;
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -30,8 +30,8 @@ const VerifyOTP = () => {
 
   // Redirect if no userId in state
   useEffect(() => {
-    if (!userId) navigate('/register');
-  }, [userId, navigate]);
+    if (!pendingId) navigate('/register');
+  }, [pendingId, navigate]);
 
   // Countdown timer for resend
   useEffect(() => {
@@ -84,7 +84,7 @@ const VerifyOTP = () => {
     setError(''); setSuccess('');
     setLoading(true);
     try {
-      const res = await verifyOTP({ userId, otp: otpString });
+      const res = await verifyOTP({ pendingId, otp: otpString });
       login(res.data.token, res.data.user);
       navigate(ROLE_REDIRECTS[res.data.user.role] || '/student');
     } catch (err) {
@@ -101,7 +101,7 @@ const VerifyOTP = () => {
     setResending(true);
     setError(''); setSuccess('');
     try {
-      await resendOTP({ userId });
+      await resendOTP({ pendingId });
       setSuccess('A new OTP has been sent to your email');
       setCountdown(60);
       setCanResend(false);
