@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { FiBell, FiX, FiCheck, FiCheckCircle, FiAlertTriangle, FiInfo, FiAlertCircle } from 'react-icons/fi';
+import { FiBell, FiX, FiCheck, FiAlertTriangle, FiInfo, FiAlertCircle } from 'react-icons/fi';
 import { useNotifications } from '../../context/NotificationContext';
 
 const TYPE_CONFIG = {

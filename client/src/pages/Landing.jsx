@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
   FiArrowRight, FiCheckCircle, FiMenu, FiX,
   FiShield, FiBarChart2, FiCalendar, FiMessageSquare,
-  FiCreditCard, FiAlertCircle, FiUsers, FiLogOut,
+  FiCreditCard, FiAlertCircle, FiLogOut,
   FiSun, FiMoon
 } from 'react-icons/fi';
 import { LuBuilding2, LuBedDouble } from 'react-icons/lu';

@@ -41,7 +41,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          // student, admin, and warden routes are protected based on user roles
+          {/* student, admin, and warden routes are protected based on user roles */}
           <Route path="/student" element={
             <ProtectedRoute allowedRoles={['student']}><StudentDashboard /></ProtectedRoute>
           } />
