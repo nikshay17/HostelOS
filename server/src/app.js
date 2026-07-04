@@ -46,7 +46,6 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.use(require('./middleware/error.middleware'));
 app.use('/auth', require('./routes/auth.routes'));
 app.use('/dashboard', require('./routes/dashboard.routes'));
 app.use('/rooms', require('./routes/room.routes'));
@@ -56,15 +55,11 @@ app.use('/attendance', require('./routes/attendance.routes'));
 app.use('/face', require('./routes/faceAuth.routes'));
 app.use('/feedback', require('./routes/feedback.routes'));
 app.use('/notifications', require('./routes/notification.routes'));
-
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
-app.use(require('./middleware/error.middleware'));
 app.use('/complaints', require('./routes/complaint.routes'));
 
 app.use('/analytics', require('./routes/analytics.routes'));
 app.use('/security', require('./routes/security.routes'));
+
+app.use(require('./middleware/error.middleware'));
 
 module.exports = app;

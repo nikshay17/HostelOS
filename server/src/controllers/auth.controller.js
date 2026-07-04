@@ -40,13 +40,16 @@ exports.register = async (req, res) => {
     });
 
     // Send OTP email
+    console.info('[auth.register] pending registration created', { pendingId: pending._id, email });
     await sendOTPEmail({ to: email, name, otp });
+    console.info('[auth.register] OTP email sent', { pendingId: pending._id, email });
 
     res.status(201).json({
       message: 'OTP sent to your email. Please verify within 10 minutes.',
       pendingId: pending._id, // frontend uses this to call /verify-otp
     });
   } catch (err) {
+    console.error('[auth.register] failed', { message: err.message, stack: err.stack });
     res.status(500).json({ message: err.message });
   }
 };
@@ -208,10 +211,13 @@ exports.resendOTP = async (req, res) => {
     pending.otpExpiry = otpExpiry;
     await pending.save();
 
+    console.info('[auth.resendOTP] sending OTP email', { pendingId, email: pending.email });
     await sendOTPEmail({ to: pending.email, name: pending.name, otp });
+    console.info('[auth.resendOTP] OTP email sent', { pendingId, email: pending.email });
 
     res.json({ message: 'New OTP sent to your email' });
   } catch (err) {
+    console.error('[auth.resendOTP] failed', { message: err.message, stack: err.stack });
     res.status(500).json({ message: err.message });
   }
 };
