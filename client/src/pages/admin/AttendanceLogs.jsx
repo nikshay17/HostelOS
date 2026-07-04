@@ -66,20 +66,20 @@ const AttendanceLogs = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <Card className="p-4 text-center">
           <p className="text-3xl font-bold text-success">{presentCount}</p>
-          <p className="text-sm text-gray-500 mt-1">Present</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Present</p>
         </Card>
         <Card className="p-4 text-center">
           <p className="text-3xl font-bold text-danger">{absentCount}</p>
-          <p className="text-sm text-gray-500 mt-1">Absent</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Absent</p>
         </Card>
         <Card className="p-4 text-center">
-          <p className="text-3xl font-bold text-gray-900">{records.length}</p>
-          <p className="text-sm text-gray-500 mt-1">Total Records</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">{records.length}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Total Records</p>
         </Card>
       </div>
 
       <Card className="p-5 mb-6">
-        <p className="text-sm font-semibold text-gray-900 mb-3">Mark Student Absent</p>
+        <p className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Mark Student Absent</p>
         <form onSubmit={handleMarkAbsent} className="flex items-center gap-3 max-w-md">
           <input
             placeholder="Student MongoDB _id"
@@ -99,31 +99,31 @@ const AttendanceLogs = () => {
           {loading ? <Loader /> : records.length === 0 ? (
             <EmptyState title="No records today" description="No attendance has been marked yet" icon={FiCalendar} />
           ) : (
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-card">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-card">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-gray-50 border-b border-gray-200">
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Student</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Time</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</th>
+                    <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Student</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Time</th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Location</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {records.map(r => (
-                      <tr key={r._id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={r._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2.5">
                             <Avatar name={r.student.name} size="sm" />
                             <div>
-                              <p className="font-medium text-gray-900">{r.student.name}</p>
-                              <p className="text-xs text-gray-400">{r.student.studentId}</p>
+                              <p className="font-medium text-gray-900 dark:text-white">{r.student.name}</p>
+                              <p className="text-xs text-gray-400 dark:text-gray-500">{r.student.studentId}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-4 py-3"><Badge status={r.status} /></td>
-                        <td className="px-4 py-3 text-gray-500 text-xs">{new Date(r.date).toLocaleTimeString()}</td>
+                        <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs">{new Date(r.date).toLocaleTimeString()}</td>
                         <td className="px-4 py-3">
                           {r.location?.latitude ? (
                             <Button
@@ -135,7 +135,7 @@ const AttendanceLogs = () => {
                               View
                             </Button>
                           ) : (
-                            <span className="text-xs text-gray-400">No location</span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500">No location</span>
                           )}
                         </td>
                       </tr>
@@ -149,7 +149,7 @@ const AttendanceLogs = () => {
 
         {selectedLocation && (
           <Card className="p-4">
-            <p className="text-sm font-semibold text-gray-900 mb-3">Check-in Location</p>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Check-in Location</p>
             <LocationMap latitude={selectedLocation.latitude} longitude={selectedLocation.longitude} />
             <Button
               variant="ghost"

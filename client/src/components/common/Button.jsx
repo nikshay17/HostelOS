@@ -2,10 +2,10 @@ import { FiLoader } from 'react-icons/fi';
 
 const VARIANTS = {
   primary:   'bg-primary text-white hover:bg-primary-hover border border-primary hover:border-primary-hover',
-  secondary: 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400',
+  secondary: 'bg-white text-gray-700 dark:bg-gray-900 dark:text-gray-200 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600',
   danger:    'bg-danger text-white hover:bg-danger-dark border border-danger',
   success:   'bg-success text-white hover:bg-success-dark border border-success',
-  ghost:     'bg-transparent text-gray-600 hover:bg-gray-100 border border-transparent',
+  ghost:     'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 border border-transparent',
 };
 
 const SIZES = {

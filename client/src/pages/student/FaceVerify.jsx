@@ -76,10 +76,10 @@ const FaceVerify = () => {
                 {enrolled ? <FiCheckCircle size={20} className="text-success" /> : <FiCamera size={20} className="text-warning" />}
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
                   {enrolled ? 'Face Enrolled' : 'Not Yet Enrolled'}
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-400 dark:text-gray-500">
                   {enrolled ? 'Your face is registered for verification' : 'Enroll your face to use biometric check-in'}
                 </p>
               </div>
@@ -90,8 +90,8 @@ const FaceVerify = () => {
               buttonLabel={submitting ? 'Processing...' : enrolled ? 'Verify My Face' : 'Enroll My Face'}
             />
 
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-500 flex items-center gap-1.5">
+            <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                 <FiShield size={12} />
                 Your face data is stored securely and used only for attendance verification
               </p>

@@ -84,8 +84,8 @@ const ApproveGatePass = () => {
       <SuccessBanner message={message} />
 
       {showScanner && (
-        <div className="mb-6 p-5 bg-white border border-gray-200 rounded-xl shadow-card">
-          <p className="text-sm font-semibold text-gray-900 mb-3">Scan Student Return QR</p>
+        <div className="mb-6 p-5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-card">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Scan Student Return QR</p>
           <QRScanner onScanSuccess={handleScanSuccess} onScanError={handleScanError} />
         </div>
       )}
@@ -93,34 +93,34 @@ const ApproveGatePass = () => {
       {loading ? <Loader /> : passes.length === 0 ? (
         <EmptyState title="No pending gate passes" description="All gate pass requests have been processed" icon={FiLogOut} />
       ) : (
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-card">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-card">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Student</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Reason</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Expected Return</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Student</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Reason</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Expected Return</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                 {passes.map(p => (
-                  <tr key={p._id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={p._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2.5">
                         <Avatar name={p.student.name} size="sm" />
                         <div>
-                          <p className="font-medium text-gray-900">{p.student.name}</p>
-                          <p className="text-xs text-gray-400">{p.student.studentId}</p>
+                          <p className="font-medium text-gray-900 dark:text-white">{p.student.name}</p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500">{p.student.studentId}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-gray-600 max-w-xs">
+                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300 max-w-xs">
                       <p className="truncate">{p.reason}</p>
                     </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">{new Date(p.expectedReturnTime).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs">{new Date(p.expectedReturnTime).toLocaleString()}</td>
                     <td className="px-4 py-3"><Badge status={p.status} /></td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">

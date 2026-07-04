@@ -114,17 +114,17 @@ const ManageRooms = () => {
           />
           <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Room Number</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Room Number</label>
               <input
                 placeholder="e.g. A101"
                 value={form.roomNumber}
                 onChange={(e) => setForm({ ...form, roomNumber: e.target.value })}
                 required
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Capacity</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Capacity</label>
               <input
                 type="number"
                 min={1}
@@ -132,26 +132,26 @@ const ManageRooms = () => {
                 value={form.capacity}
                 onChange={(e) => setForm({ ...form, capacity: Number(e.target.value) })}
                 required
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Floor</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Floor</label>
               <input
                 type="number"
                 min={1}
                 value={form.floor}
                 onChange={(e) => setForm({ ...form, floor: Number(e.target.value) })}
                 required
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Type</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Type</label>
               <select
                 value={form.type}
                 onChange={(e) => setForm({ ...form, type: e.target.value })}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               >
                 <option value="single">Single</option>
                 <option value="double">Double</option>
@@ -175,12 +175,12 @@ const ManageRooms = () => {
             <Card key={room._id} className="p-5">
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <p className="text-base font-semibold text-gray-900">{room.roomNumber}</p>
-                  <p className="text-sm text-gray-400 capitalize mt-0.5">{room.type} · Floor {room.floor}</p>
+                  <p className="text-base font-semibold text-gray-900 dark:text-white">{room.roomNumber}</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500 capitalize mt-0.5">{room.type} · Floor {room.floor}</p>
                 </div>
                 <Badge status={room.status} />
               </div>
-              <div className="flex items-center gap-1.5 text-sm text-gray-500 mb-4">
+              <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 mb-4">
                 <FiUsers size={13} />
                 {room.occupants.length}/{room.capacity} occupied
               </div>

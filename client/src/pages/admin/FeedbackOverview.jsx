@@ -59,19 +59,19 @@ const FeedbackOverview = () => {
         <>
           {summary && (
             <div className="mb-6">
-              <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-card mb-4">
+              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-5 shadow-card mb-4">
                 <div className="flex items-center gap-4">
                   <div className="text-center">
-                    <p className="text-4xl font-bold text-gray-900">{summary.overall.overallAverage?.toFixed(1) || '—'}</p>
+                    <p className="text-4xl font-bold text-gray-900 dark:text-white">{summary.overall.overallAverage?.toFixed(1) || '—'}</p>
                     <StarDisplay rating={Math.round(summary.overall.overallAverage || 0)} />
-                    <p className="text-xs text-gray-400 mt-1">{summary.overall.totalResponses} responses</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{summary.overall.totalResponses} responses</p>
                   </div>
-                  <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 pl-4 border-l border-gray-200">
+                  <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 pl-4 border-l border-gray-200 dark:border-gray-800">
                     {summary.byCategory.map(cat => (
                       <div key={cat._id} className="text-center">
-                        <p className="text-xl font-bold text-gray-900">{cat.averageRating.toFixed(1)}</p>
-                        <p className="text-xs text-gray-500 capitalize">{cat._id}</p>
-                        <p className="text-xs text-gray-400">{cat.totalResponses} reviews</p>
+                        <p className="text-xl font-bold text-gray-900 dark:text-white">{cat.averageRating.toFixed(1)}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{cat._id}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">{cat.totalResponses} reviews</p>
                       </div>
                     ))}
                   </div>
@@ -85,7 +85,7 @@ const FeedbackOverview = () => {
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary bg-white"
+              className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
             >
               <option value="">All categories</option>
               <option value="mess">Mess</option>
@@ -98,11 +98,11 @@ const FeedbackOverview = () => {
           {feedbackList.length === 0 ? (
             <EmptyState title="No feedback found" icon={FiMessageSquare} />
           ) : (
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-card">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-card">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-gray-50 border-b border-gray-200">
+                    <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Student</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Rating</th>
@@ -112,22 +112,22 @@ const FeedbackOverview = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {feedbackList.map(f => (
-                      <tr key={f._id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={f._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2.5">
                             <Avatar name={f.student.name} size="sm" />
                             <div>
-                              <p className="font-medium text-gray-900">{f.student.name}</p>
-                              <p className="text-xs text-gray-400">{f.student.studentId}</p>
+                              <p className="font-medium text-gray-900 dark:text-white">{f.student.name}</p>
+                              <p className="text-xs text-gray-400 dark:text-gray-500">{f.student.studentId}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-gray-600 capitalize">{f.category}</td>
+                        <td className="px-4 py-3 text-gray-600 dark:text-gray-300 capitalize">{f.category}</td>
                         <td className="px-4 py-3"><StarDisplay rating={f.rating} /></td>
-                        <td className="px-4 py-3 text-gray-500 max-w-xs">
+                        <td className="px-4 py-3 text-gray-500 dark:text-gray-400 max-w-xs">
                           <p className="truncate">{f.comments || '—'}</p>
                         </td>
-                        <td className="px-4 py-3 text-gray-400 text-xs">{new Date(f.createdAt).toLocaleDateString()}</td>
+                        <td className="px-4 py-3 text-gray-400 dark:text-gray-500 text-xs">{new Date(f.createdAt).toLocaleDateString()}</td>
                       </tr>
                     ))}
                   </tbody>

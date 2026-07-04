@@ -39,9 +39,9 @@ const CreateStaff = () => {
 
   const Field = ({ label, icon: Icon, type = 'text', showPasswordToggle = false, showPassword = false, onTogglePassword, ...props }) => (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1.5">{label}</label>
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{label}</label>
       <div className="relative">
-        {Icon && <Icon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />}
+        {Icon && <Icon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />}
         <input
           type={type}
           className={`w-full ${Icon ? 'pl-9' : 'pl-3'} ${showPasswordToggle ? 'pr-10' : 'pr-3'} py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors`}
@@ -51,7 +51,7 @@ const CreateStaff = () => {
           <button
             type="button"
             onClick={onTogglePassword}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <FiEyeOff size={14} /> : <FiEye size={14} />}
@@ -74,13 +74,13 @@ const CreateStaff = () => {
         <Card className="p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Account Type</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Account Type</label>
               <div className="flex gap-3">
                 {['warden', 'admin'].map(role => (
                   <label
                     key={role}
                     className={`flex-1 flex items-center justify-center px-4 py-2 rounded-lg border text-sm font-medium cursor-pointer transition-colors capitalize
-                      ${form.role === role ? 'bg-primary-light border-primary text-primary' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}
+                      ${form.role === role ? 'bg-primary-light border-primary text-primary' : 'border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                   >
                     <input type="radio" name="role" value={role} checked={form.role === role}
                       onChange={(e) => setForm({ ...form, role: e.target.value })} className="sr-only" />

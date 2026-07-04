@@ -43,7 +43,7 @@ const SecuritySettings = () => {
       <PageHeader
         title="Security & Audit Log"
         description="Track all sensitive actions performed in the system"
-        actions={<span className="text-sm text-gray-500">{logs.length} records</span>}
+        actions={<span className="text-sm text-gray-500 dark:text-gray-400">{logs.length} records</span>}
       />
       <ErrorBanner message={error} />
 
@@ -52,7 +52,7 @@ const SecuritySettings = () => {
         <select
           value={filterAction}
           onChange={(e) => setFilterAction(e.target.value)}
-          className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary bg-white"
+            className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
         >
           <option value="">All actions</option>
           <option value="CREATE_STAFF">Create Staff</option>
@@ -64,23 +64,23 @@ const SecuritySettings = () => {
       {loading ? <Loader /> : logs.length === 0 ? (
         <EmptyState title="No audit logs" description="Sensitive actions will be recorded here" icon={FiShield} />
       ) : (
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-card">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-card">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actor</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Details</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">IP Address</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Time</th>
+                <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Action</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actor</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Details</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">IP Address</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Time</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {logs.map(log => (
-                  <tr key={log._id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={log._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                     <td className="px-4 py-3">
-                      <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold ${ACTION_COLORS[log.action] || 'bg-gray-100 text-gray-600'}`}>
+                      <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold ${ACTION_COLORS[log.action] || 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'}`}>
                         {log.action}
                       </span>
                     </td>
@@ -88,18 +88,18 @@ const SecuritySettings = () => {
                       <div className="flex items-center gap-2.5">
                         <Avatar name={log.actor?.name || '?'} size="sm" />
                         <div>
-                          <p className="font-medium text-gray-900">{log.actor?.name || 'Unknown'}</p>
-                          <p className="text-xs text-gray-400 capitalize">{log.actorRole}</p>
+                          <p className="font-medium text-gray-900 dark:text-white">{log.actor?.name || 'Unknown'}</p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500 capitalize">{log.actorRole}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <code className="text-xs bg-gray-100 px-2 py-0.5 rounded text-gray-600">
+                      <code className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-gray-600 dark:text-gray-300">
                         {JSON.stringify(log.details)}
                       </code>
                     </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs font-mono">{log.ipAddress}</td>
-                    <td className="px-4 py-3 text-gray-400 text-xs">{new Date(log.createdAt).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs font-mono">{log.ipAddress}</td>
+                    <td className="px-4 py-3 text-gray-400 dark:text-gray-500 text-xs">{new Date(log.createdAt).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>

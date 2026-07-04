@@ -66,29 +66,29 @@ const GatePass = () => {
         <SectionHeader title="New Gate Pass Request" description="Fill in the details below" />
         <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Reason for outing</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Reason for outing</label>
             <div className="relative">
-              <FiFileText size={15} className="absolute left-3 top-3 text-gray-400" />
+              <FiFileText size={15} className="absolute left-3 top-3 text-gray-400 dark:text-gray-500" />
               <textarea
                 placeholder="Briefly describe the purpose of your outing..."
                 value={form.reason}
                 onChange={(e) => setForm({ ...form, reason: e.target.value })}
                 required
                 rows={3}
-                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors resize-none"
+                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors resize-none bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Expected return time</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Expected return time</label>
             <div className="relative">
-              <FiCalendar size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <FiCalendar size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
               <input
                 type="datetime-local"
                 value={form.expectedReturnTime}
                 onChange={(e) => setForm({ ...form, expectedReturnTime: e.target.value })}
                 required
-                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               />
             </div>
           </div>
@@ -109,10 +109,10 @@ const GatePass = () => {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <p className="text-sm font-semibold text-gray-900">{p.reason}</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">{p.reason}</p>
                     <Badge status={p.status} />
                   </div>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-400 dark:text-gray-500">
                     Expected return: {new Date(p.expectedReturnTime).toLocaleString()}
                   </p>
                   {p.status === 'completed' && (
@@ -123,8 +123,8 @@ const GatePass = () => {
                 </div>
                 {p.status === 'approved' && p.qrCode && (
                   <div className="shrink-0">
-                    <p className="text-xs text-gray-400 mb-1 text-center">Show at gate</p>
-                    <img src={p.qrCode} alt="Gate Pass QR" className="w-20 h-20 rounded-lg border border-gray-200" />
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mb-1 text-center">Show at gate</p>
+                    <img src={p.qrCode} alt="Gate Pass QR" className="w-20 h-20 rounded-lg border border-gray-200 dark:border-gray-800" />
                   </div>
                 )}
               </div>
