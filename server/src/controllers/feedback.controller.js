@@ -1,5 +1,31 @@
 const Feedback = require('../models/Feedback.model');
 
+const normalizeStudent = (student) => {
+  if (!student || typeof student !== 'object') {
+    return {
+      _id: null,
+      name: 'Unknown student',
+      studentId: '—',
+      roomNumber: '—',
+    };
+  }
+
+  return {
+    _id: student._id || null,
+    name: student.name || 'Unknown student',
+    studentId: student.studentId || '—',
+    roomNumber: student.roomNumber || '—',
+  };
+};
+
+const serializeFeedback = (feedbackDoc) => {
+  const feedback = feedbackDoc.toObject ? feedbackDoc.toObject() : feedbackDoc;
+  return {
+    ...feedback,
+    student: normalizeStudent(feedback.student),
+  };
+};
+
 // Student submits feedback
 exports.createFeedback = async (req, res) => {
   try {
@@ -30,7 +56,7 @@ exports.createFeedback = async (req, res) => {
 exports.getMyFeedback = async (req, res) => {
   try {
     const feedback = await Feedback.find({ student: req.user.id }).sort({ createdAt: -1 });
-    res.json(feedback);
+    res.json(feedback.map(serializeFeedback));
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -46,7 +72,7 @@ exports.getAllFeedback = async (req, res) => {
     const feedback = await Feedback.find(filter)
       .populate('student', 'name studentId roomNumber')
       .sort({ createdAt: -1 });
-    res.json(feedback);
+    res.json(feedback.map(serializeFeedback));
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
