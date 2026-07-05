@@ -1,18 +1,29 @@
 const nodemailer = require('nodemailer');
 
+const mailPort = Number(process.env.EMAIL_PORT || 587);
+const mailSecure = mailPort === 465;
+const fallbackFrom = process.env.EMAIL_USER ? `HostelOS <${process.env.EMAIL_USER}>` : undefined;
+const mailFrom = process.env.EMAIL_FROM && process.env.EMAIL_FROM.includes('@')
+  ? process.env.EMAIL_FROM
+  : fallbackFrom;
+
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: Number(process.env.EMAIL_PORT),
-  secure: false,
+  port: mailPort,
+  secure: mailSecure,
+  requireTLS: !mailSecure,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
 });
 
 const sendOTPEmail = async ({ to, name, otp }) => {
   await transporter.sendMail({
-    from: process.env.EMAIL_FROM,
+    from: mailFrom,
     to,
     subject: 'Verify your HostelOS account',
     html: `

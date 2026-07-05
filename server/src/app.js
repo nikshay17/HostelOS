@@ -32,6 +32,8 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization']
 };
 
+app.set("trust proxy", 1); // trust first proxy for rate limiting
+
 app.use(helmet()); // sets secure HTTP headers
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
@@ -44,7 +46,6 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.use(require('./middleware/error.middleware'));
 app.use('/auth', require('./routes/auth.routes'));
 app.use('/dashboard', require('./routes/dashboard.routes'));
 app.use('/rooms', require('./routes/room.routes'));
@@ -54,15 +55,11 @@ app.use('/attendance', require('./routes/attendance.routes'));
 app.use('/face', require('./routes/faceAuth.routes'));
 app.use('/feedback', require('./routes/feedback.routes'));
 app.use('/notifications', require('./routes/notification.routes'));
-
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
-app.use(require('./middleware/error.middleware'));
 app.use('/complaints', require('./routes/complaint.routes'));
 
 app.use('/analytics', require('./routes/analytics.routes'));
-module.exports = app;
-
 app.use('/security', require('./routes/security.routes'));
+
+app.use(require('./middleware/error.middleware'));
+
+module.exports = app;
