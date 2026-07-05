@@ -39,8 +39,12 @@ const FeedbackOverview = () => {
         getFeedbackSummary(token),
         getAllFeedback(token, filters)
       ]);
-      setSummary(summaryRes.data);
-      setFeedbackList(listRes.data);
+
+      const summaryData = summaryRes?.data || { byCategory: [], overall: { overallAverage: 0, totalResponses: 0 } };
+      const listData = Array.isArray(listRes?.data) ? listRes.data : [];
+
+      setSummary(summaryData);
+      setFeedbackList(listData);
     } catch (err) {
       setError('Failed to load feedback data');
     } finally {
