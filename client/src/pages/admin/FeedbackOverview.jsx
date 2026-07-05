@@ -67,11 +67,11 @@ const FeedbackOverview = () => {
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{summary.overall.totalResponses} responses</p>
                   </div>
                   <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3 pl-4 border-l border-gray-200 dark:border-gray-800">
-                    {summary.byCategory.map(cat => (
-                      <div key={cat._id} className="text-center">
-                        <p className="text-xl font-bold text-gray-900 dark:text-white">{cat.averageRating.toFixed(1)}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{cat._id}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500">{cat.totalResponses} reviews</p>
+                    {(summary.byCategory || []).map(cat => (
+                      <div key={cat?._id || 'unknown'} className="text-center">
+                        <p className="text-xl font-bold text-gray-900 dark:text-white">{(cat?.averageRating ?? 0).toFixed(1)}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{cat?._id || 'Unknown'}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">{cat?.totalResponses ?? 0} reviews</p>
                       </div>
                     ))}
                   </div>
@@ -111,25 +111,31 @@ const FeedbackOverview = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {feedbackList.map(f => (
-                      <tr key={f._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2.5">
-                            <Avatar name={f.student.name} size="sm" />
-                            <div>
-                              <p className="font-medium text-gray-900 dark:text-white">{f.student.name}</p>
-                              <p className="text-xs text-gray-400 dark:text-gray-500">{f.student.studentId}</p>
+                    {feedbackList.map(f => {
+                      const student = f.student || {};
+                      const studentName = student.name || 'Unknown student';
+                      const studentId = student.studentId || '—';
+
+                      return (
+                        <tr key={f._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2.5">
+                              <Avatar name={studentName} size="sm" />
+                              <div>
+                                <p className="font-medium text-gray-900 dark:text-white">{studentName}</p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500">{studentId}</p>
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-gray-600 dark:text-gray-300 capitalize">{f.category}</td>
-                        <td className="px-4 py-3"><StarDisplay rating={f.rating} /></td>
-                        <td className="px-4 py-3 text-gray-500 dark:text-gray-400 max-w-xs">
-                          <p className="truncate">{f.comments || '—'}</p>
-                        </td>
-                        <td className="px-4 py-3 text-gray-400 dark:text-gray-500 text-xs">{new Date(f.createdAt).toLocaleDateString()}</td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600 dark:text-gray-300 capitalize">{f.category || 'General'}</td>
+                          <td className="px-4 py-3"><StarDisplay rating={f.rating || 0} /></td>
+                          <td className="px-4 py-3 text-gray-500 dark:text-gray-400 max-w-xs">
+                            <p className="truncate">{f.comments || '—'}</p>
+                          </td>
+                          <td className="px-4 py-3 text-gray-400 dark:text-gray-500 text-xs">{f.createdAt ? new Date(f.createdAt).toLocaleDateString() : '—'}</td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
