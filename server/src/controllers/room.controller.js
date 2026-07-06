@@ -1,5 +1,19 @@
 const Room = require('../models/Room.model');
 const Booking = require('../models/Booking.model');
+const User = require('../models/User.model');
+
+// Get available students for assignment (not already in a room)
+exports.getAvailableStudents = async (req, res) => {
+  try {
+    const students = await User.find({ 
+      role: 'student',
+      roomNumber: { $in: ['', null] }
+    }, 'name studentId email').sort({ name: 1 });
+    res.json(students);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 // List all rooms (everyone can view)
 exports.getAllRooms = async (req, res) => {

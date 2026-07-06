@@ -3,7 +3,7 @@ const router = express.Router();
 const protect = require('../middleware/auth.middleware');
 const authorize = require('../middleware/role.middleware');
 const {
-  getAllRooms, getRoomById, createRoom, updateRoom, deleteRoom, removeStudentFromRoom, assignStudentToRoom
+  getAllRooms, getRoomById, createRoom, updateRoom, deleteRoom, removeStudentFromRoom, assignStudentToRoom, getAvailableStudents
 } = require('../controllers/room.controller');
 const {
   createBooking, getMyBookings, cancelBooking,
@@ -12,6 +12,7 @@ const {
 
 // Rooms — static paths first
 router.get('/', protect, getAllRooms);
+router.get('/available-students', protect, authorize('warden', 'admin'), getAvailableStudents);
 router.post('/', protect, authorize('warden', 'admin'), createRoom);
 
 // Bookings — also static paths, declared before /:id
@@ -21,6 +22,10 @@ router.patch('/bookings/:id/cancel', protect, authorize('student'), cancelBookin
 router.get('/bookings/pending', protect, authorize('warden', 'admin'), getPendingBookings);
 router.patch('/bookings/:id/approve', protect, authorize('warden', 'admin'), approveBooking);
 router.patch('/bookings/:id/reject', protect, authorize('warden', 'admin'), rejectBooking);
+
+// Room student management — static paths before /:id
+router.patch('/:id/remove-student', protect, authorize('warden', 'admin'), removeStudentFromRoom);
+router.patch('/:id/assign-student', protect, authorize('warden', 'admin'), assignStudentToRoom);
 
 // Room wildcard routes — last
 router.get('/:id', protect, getRoomById);
