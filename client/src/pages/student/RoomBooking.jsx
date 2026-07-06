@@ -101,7 +101,7 @@ const RoomBooking = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {myBookings.map(b => (
+                      {myBookings.map(b => b.room && (
                         <tr key={b._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                           <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{b.room.roomNumber}</td>
                           <td className="px-4 py-3 text-gray-500 dark:text-gray-400 capitalize">{b.room.type}</td>

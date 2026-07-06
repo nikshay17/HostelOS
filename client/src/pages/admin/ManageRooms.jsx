@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import {
   getAllRooms, createRoom, updateRoom, deleteRoom,
-  removeStudentFromRoom, assignStudentToRoom
+  removeStudentFromRoom, assignStudentToRoom, getAvailableStudents
 } from '../../services/roomService';
 import PageLayout from '../../components/common/PageLayout';
 import PageHeader from '../../components/common/PageHeader';
@@ -26,18 +26,43 @@ const EMPTY_FORM = { roomNumber: '', capacity: 2, floor: 1, type: 'double' };
 // ─── ASSIGN STUDENT MODAL ─────────────────────────────────────────────────────
 const AssignModal = ({ room, onClose, onSuccess }) => {
   const { token } = useAuth();
-  const [studentId, setStudentId] = useState('');
+  const [students, setStudents] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    fetchAvailableStudents();
+  }, []);
+
+  const fetchAvailableStudents = async () => {
+    try {
+      setLoading(true);
+      const response = await getAvailableStudents(token);
+      setStudents(response.data);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to load students');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredStudents = students.filter(student =>
+    student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.studentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!studentId.trim()) { setError('Please enter a Student MongoDB ID'); return; }
+    if (!selectedStudent) { setError('Please select a student'); return; }
     setError('');
     setSubmitting(true);
     try {
-      await assignStudentToRoom(room._id, studentId.trim(), token);
-      onSuccess(`Student assigned to room ${room.roomNumber} successfully`);
+      await assignStudentToRoom(room._id, selectedStudent._id, token);
+      onSuccess(`${selectedStudent.name} assigned to room ${room.roomNumber} successfully`);
     } catch (err) {
       setError(err.response?.data?.message || 'Assignment failed');
     } finally {
@@ -47,7 +72,7 @@ const AssignModal = ({ room, onClose, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
           <div>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
@@ -70,24 +95,52 @@ const AssignModal = ({ room, onClose, onSuccess }) => {
               {error}
             </div>
           )}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-              Student MongoDB ID
+          <div className="space-y-3">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Search & Select Student
             </label>
             <div className="relative">
               <FiSearch size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
-                placeholder="Paste student's _id from MongoDB"
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
-                required
-                className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono transition-colors"
+                type="text"
+                placeholder="Search by name, ID, or email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary bg-white dark:bg-gray-800 text-gray-900 dark:text-white transition-colors"
               />
             </div>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5">
-              Find the student's ID in MongoDB Compass or the database
-            </p>
+            
+            <div className="max-h-64 overflow-y-auto border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800">
+              {loading ? (
+                <div className="p-4 text-center text-gray-500">Loading students...</div>
+              ) : filteredStudents.length === 0 ? (
+                <div className="p-4 text-center text-gray-500 text-xs">
+                  {students.length === 0 ? 'No available students' : 'No matching students'}
+                </div>
+              ) : (
+                filteredStudents.map((student) => (
+                  <label
+                    key={student._id}
+                    className="flex items-center p-3 border-b border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors last:border-b-0"
+                  >
+                    <input
+                      type="radio"
+                      name="student"
+                      value={student._id}
+                      checked={selectedStudent?._id === student._id}
+                      onChange={() => setSelectedStudent(student)}
+                      className="w-4 h-4 text-primary"
+                    />
+                    <div className="ml-3 flex-1">
+                      <p className="text-xs font-medium text-gray-900 dark:text-white">{student.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{student.studentId} • {student.email}</p>
+                    </div>
+                  </label>
+                ))
+              )}
+            </div>
           </div>
+          
           <div className="flex gap-3 pt-1">
             <Button type="button" variant="secondary" className="flex-1" onClick={onClose}>
               Cancel
@@ -96,6 +149,7 @@ const AssignModal = ({ room, onClose, onSuccess }) => {
               type="submit"
               className="flex-1"
               loading={submitting}
+              disabled={!selectedStudent}
               iconLeft={<FiUserPlus size={13} />}
             >
               Assign

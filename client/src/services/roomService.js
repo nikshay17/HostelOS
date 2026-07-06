@@ -3,6 +3,7 @@ import api from './api';
 const authHeader = (token) => ({ headers: { Authorization: `Bearer ${token}` } });
 
 export const getAllRooms = (token) => api.get('/rooms', authHeader(token));
+export const getAvailableStudents = (token) => api.get('/rooms/available-students', authHeader(token));
 export const requestBooking = (roomId, token) =>
   api.post('/rooms/bookings', { roomId }, authHeader(token));
 export const getMyBookings = (token) => api.get('/rooms/bookings/mine', authHeader(token));
