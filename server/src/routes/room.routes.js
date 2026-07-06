@@ -3,7 +3,7 @@ const router = express.Router();
 const protect = require('../middleware/auth.middleware');
 const authorize = require('../middleware/role.middleware');
 const {
-  getAllRooms, getRoomById, createRoom, updateRoom, deleteRoom
+  getAllRooms, getRoomById, createRoom, updateRoom, deleteRoom, removeStudentFromRoom, assignStudentToRoom
 } = require('../controllers/room.controller');
 const {
   createBooking, getMyBookings, cancelBooking,

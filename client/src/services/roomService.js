@@ -8,7 +8,11 @@ export const requestBooking = (roomId, token) =>
 export const getMyBookings = (token) => api.get('/rooms/bookings/mine', authHeader(token));
 export const cancelBooking = (bookingId, token) =>
   api.patch(`/rooms/bookings/${bookingId}/cancel`, {}, authHeader(token));
+export const removeStudentFromRoom = (roomId, studentId, token) =>
+  api.patch(`/rooms/${roomId}/remove-student`, { studentId }, authHeader(token));
 
+export const assignStudentToRoom = (roomId, studentId, token) =>
+  api.patch(`/rooms/${roomId}/assign-student`, { studentId }, authHeader(token));
 
 //DAY 4
 export const createRoom = (data, token) => api.post('/rooms', data, authHeader(token));
