@@ -231,8 +231,12 @@ const Hero = () => (
           src="https://images.unsplash.com/photo-1591123120675-6f7f1aae0e5b?fm=jpg&q=80&w=2400&auto=format&fit=crop"
           alt="Hostel building"
           className="w-full h-full"
-          overlay={true}
+          overlay={false}
         />
+        {/* Stronger, more even darkening so text stays legible over bright/whitish photos */}
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/25" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
       </div>
 
       {/* Hero content */}
