@@ -1,11 +1,20 @@
 const { body } = require('express-validator');
+const ALLOWED_EMAIL_DOMAIN = '@pec.edu.in';
 
 exports.registerValidation = [
-  body('name').trim().notEmpty().withMessage('Name is required').isLength({ max: 100 }),
-  body('email').trim().isEmail().withMessage('Valid email is required').normalizeEmail(),
+  body('name').trim().notEmpty().withMessage('Name is required'),
+  body('email')
+    .trim()
+    .isEmail().withMessage('Valid email is required')
+    .custom((value) => {
+      if (!value.toLowerCase().endsWith(ALLOWED_EMAIL_DOMAIN)) {
+        throw new Error(`Only college email addresses ending in ${ALLOWED_EMAIL_DOMAIN} are allowed`);
+      }
+      return true;
+    }),
   body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
   body('studentId').trim().notEmpty().withMessage('Student ID is required'),
-  body('phone').optional({ checkFalsy: true }).isMobilePhone().withMessage('Invalid phone number')
+  body('phone').optional({ checkFalsy: true }).isMobilePhone(),
 ];
 
 exports.loginValidation = [

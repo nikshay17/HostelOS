@@ -9,6 +9,9 @@ const { sendOTPEmail } = require('../utils/mailer');
 exports.register = async (req, res) => {
   try {
     const { name, email, password, studentId, roomNumber, phone } = req.body;
+    if (!email.toLowerCase().endsWith('@pec.edu.in')) {
+      return res.status(400).json({ message: 'Only college email addresses (@pec.edu.in) are allowed to register' });
+    }
 
     // Check if a real user already exists with this email
     const existingUser = await User.findOne({ email });
