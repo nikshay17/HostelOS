@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {
-  register, login, getMe, createStaff, verifyOTP, resendOTP
+  register, login, getMe, createStaff, verifyOTP, resendOTP, completeProfile
 } = require('../controllers/auth.controller');
 const protect = require('../middleware/auth.middleware');
 const authorize = require('../middleware/role.middleware');
@@ -16,6 +16,7 @@ router.post('/login', authLimiter, loginValidation, validate, login);
 router.post('/verify-otp', verifyOTP);   // no rate limit on verify (only 6-digit guessing, TTL handles abuse)
 router.post('/resend-otp', resendOTP);
 router.get('/me', protect, getMe);
+router.patch('/complete-profile', protect, completeProfile);
 router.post('/create-staff', protect, authorize('admin'), createStaffValidation, validate, createStaff);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
@@ -17,6 +17,21 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get('error');
+
+    if (err) {
+      setError(decodeURIComponent(err));
+    }
+  }, []);
+
+  const handleGoogleLogin = () => {
+    setError('');
+    // Keep OAuth in the current Chrome tab and therefore the current browser
+    // profile. Google will still display its account chooser.
+    window.location.assign(`${process.env.REACT_APP_API_URL}/auth/google`);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -26,19 +41,20 @@ const Login = () => {
       login(res.data.token, res.data.user);
       navigate(ROLE_REDIRECTS[res.data.user.role] || '/login');
     } catch (err) {
-        const data = err.response?.data;
-        // If user exists but hasn't verified email, redirect to OTP screen
-        if (data?.requiresVerification) {
-          navigate('/verify-otp', {
-            state: { userId: data.userId, email: form.email }
-          });
-          return;
-        }
-        setError(data?.message || 'Login failed');
-      } finally {
+      const data = err.response?.data;
+      // If user exists but hasn't verified email, redirect to OTP screen
+      if (data?.requiresVerification) {
+        navigate('/verify-otp', {
+          state: { userId: data.userId, email: form.email }
+        });
+        return;
+      }
+      setError(data?.message || 'Login failed');
+    } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -93,13 +109,28 @@ const Login = () => {
             <Button type="submit" className="w-full" loading={loading}>
               {loading ? 'Signing in...' : 'Sign in'}
             </Button>
+            
           </form>
+          
         </div>
+        <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200" /></div>
+              <div className="relative flex justify-center text-xs"><span className="bg-white px-2 text-gray-400">OR</span></div>
+            </div>
 
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={handleGoogleLogin}
+              type="button"
+            >
+              Sign in with Google
+            </Button>
         <p className="text-center text-sm text-gray-500 mt-5">
           New student?{' '}
           <a href="/register" className="text-primary font-medium hover:underline">Create an account</a>
         </p>
+        
       </div>
     </div>
   );

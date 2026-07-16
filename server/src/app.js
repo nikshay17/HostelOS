@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
 const { generalLimiter } = require('./middleware/rateLimiter.middleware');
+const passport = require('./config/passport');
 
 const app = express();
 const allowedOrigins = (process.env.CLIENT_ORIGIN || process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001,http://localhost:5173,http://127.0.0.1:5173')
@@ -41,11 +42,13 @@ app.use(express.json({ limit: '10mb' })); // base64 images from face recognition
 app.use(mongoSanitize()); // strips $ and . from request data to prevent NoSQL injection
 app.use(hpp()); // protects against HTTP parameter pollution
 app.use(generalLimiter);
+app.use(passport.initialize());
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.use('/auth', require('./routes/googleAuth.routes'));
 app.use('/auth', require('./routes/auth.routes'));
 app.use('/dashboard', require('./routes/dashboard.routes'));
 app.use('/rooms', require('./routes/room.routes'));

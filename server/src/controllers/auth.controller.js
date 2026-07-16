@@ -230,8 +230,47 @@ exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password -otp -otpExpiry');
     if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json(user);
+
+    const payload = user.toObject();
+    payload.profileComplete = user.authProvider !== 'google'
+      ? Boolean(user.profileComplete)
+      : Boolean(
+        user.profileComplete &&
+        user.studentId && !user.studentId.startsWith('PENDING-') &&
+        user.roomNumber &&
+        user.phone
+      );
+
+    res.json(payload);
   } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.completeProfile = async (req, res) => {
+  try {
+    const { studentId, roomNumber, phone } = req.body;
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.role !== 'student' || user.authProvider !== 'google') {
+      return res.status(403).json({ message: 'Profile completion is only required for Google student accounts' });
+    }
+
+    user.studentId = studentId;
+    user.roomNumber = roomNumber || '';
+    user.phone = phone || '';
+    user.profileComplete = true;
+    await user.save();
+
+    res.json({ message: 'Profile completed' });
+  } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).json({ message: 'Student ID already exists' });
+    }
     res.status(500).json({ message: err.message });
   }
 };

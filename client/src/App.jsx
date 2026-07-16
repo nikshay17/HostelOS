@@ -27,9 +27,9 @@ import Broadcast from './pages/admin/Broadcast';
 import SecuritySettings from './pages/admin/SecuritySettings';
 import Landing from './pages/Landing';
 import VerifyOTP from './pages/auth/VerifyOTP';
+import CompleteProfile from './pages/auth/CompleteProfile';
 import { ThemeProvider } from './context/ThemeContext';
-
-
+import OAuthSuccess from './pages/auth/OAuthSuccess';
 
 function App() {
   return (
@@ -39,6 +39,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/oauth-success" element={<OAuthSuccess />} />
           <Route path="/register" element={<Register />} />
 
           {/* student, admin, and warden routes are protected based on user roles */}
@@ -128,6 +129,9 @@ function App() {
           <Route path="/" element={<Landing />} />
 
           <Route path="/verify-otp" element={<VerifyOTP />} />
+          <Route path="/complete-profile" element={
+            <ProtectedRoute allowedRoles={['student']}><CompleteProfile /></ProtectedRoute>
+          } />
 
 
         </Routes>

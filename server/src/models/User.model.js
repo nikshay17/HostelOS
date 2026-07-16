@@ -5,6 +5,8 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['student', 'warden', 'admin'], default: 'student' },
+  authProvider: { type: String, enum: ['local', 'google'], default: 'local' },
+  profileComplete: { type: Boolean, default: true }, // false for Google users needing to add studentId etc.
 
   otp: { type: String },
   otpExpiry: { type: Date },
@@ -15,7 +17,7 @@ const userSchema = new mongoose.Schema({
   },
 
   // Student-only fields
-  studentId: { type: String, unique: true, sparse: true },
+  studentId: { type: String, unique: true, sparse: true }, // already sparse, good
   roomNumber: { type: String },
 
   // Staff-only fields (warden + admin)
