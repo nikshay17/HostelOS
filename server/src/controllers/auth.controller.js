@@ -237,7 +237,6 @@ exports.getMe = async (req, res) => {
       : Boolean(
         user.profileComplete &&
         user.studentId && !user.studentId.startsWith('PENDING-') &&
-        user.roomNumber &&
         user.phone
       );
 
@@ -249,7 +248,7 @@ exports.getMe = async (req, res) => {
 
 exports.completeProfile = async (req, res) => {
   try {
-    const { studentId, roomNumber, phone } = req.body;
+    const { studentId, phone } = req.body;
 
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -260,9 +259,12 @@ exports.completeProfile = async (req, res) => {
       return res.status(403).json({ message: 'Profile completion is only required for Google student accounts' });
     }
 
-    user.studentId = studentId;
-    user.roomNumber = roomNumber || '';
-    user.phone = phone || '';
+    if (!studentId?.trim() || !phone?.trim()) {
+      return res.status(400).json({ message: 'Student ID and phone are required' });
+    }
+
+    user.studentId = studentId.trim();
+    user.phone = phone.trim();
     user.profileComplete = true;
     await user.save();
 
@@ -271,6 +273,22 @@ exports.completeProfile = async (req, res) => {
     if (err.code === 11000) {
       return res.status(400).json({ message: 'Student ID already exists' });
     }
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.setGoogleUserPassword = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (user.role !== 'student' || user.authProvider !== 'google') {
+      return res.status(403).json({ message: 'Only Google student accounts can set a password here' });
+    }
+
+    user.password = await bcrypt.hash(req.body.password, 10);
+    await user.save();
+    res.json({ message: 'Password set successfully. You can now sign in with email and password.' });
+  } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };

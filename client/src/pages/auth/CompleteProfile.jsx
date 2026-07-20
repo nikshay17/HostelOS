@@ -5,14 +5,14 @@ import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/common/Button';
 import ErrorBanner from '../../components/common/ErrorBanner';
 import HostelLogo from '../../components/common/HostelLogo';
-import { FiHash, FiPhone, FiHome, FiCheckCircle } from 'react-icons/fi';
+import { FiHash, FiPhone, FiCheckCircle } from 'react-icons/fi';
 
 const ROLE_REDIRECTS = { student: '/student', warden: '/warden', admin: '/admin' };
 
 const CompleteProfile = () => {
   const navigate = useNavigate();
   const { user, token, login, loading } = useAuth();
-  const [form, setForm] = useState({ studentId: '', roomNumber: '', phone: '' });
+  const [form, setForm] = useState({ studentId: '', phone: '' });
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -20,7 +20,6 @@ const CompleteProfile = () => {
     if (user) {
       setForm({
         studentId: user.studentId && !user.studentId.startsWith('PENDING-') ? user.studentId : '',
-        roomNumber: user.roomNumber || '',
         phone: user.phone || '',
       });
     }
@@ -87,20 +86,6 @@ const CompleteProfile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Room Number</label>
-              <div className="relative">
-                <FiHome size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  value={form.roomNumber}
-                  onChange={(e) => setForm({ ...form, roomNumber: e.target.value })}
-                  placeholder="A-101"
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
-                />
-              </div>
-            </div>
-
-            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Phone</label>
               <div className="relative">
                 <FiPhone size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -109,6 +94,7 @@ const CompleteProfile = () => {
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   placeholder="9876543210"
+                  required
                   className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
                 />
               </div>

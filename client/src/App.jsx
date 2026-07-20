@@ -28,6 +28,7 @@ import SecuritySettings from './pages/admin/SecuritySettings';
 import Landing from './pages/Landing';
 import VerifyOTP from './pages/auth/VerifyOTP';
 import CompleteProfile from './pages/auth/CompleteProfile';
+import SetPassword from './pages/auth/SetPassword';
 import { ThemeProvider } from './context/ThemeContext';
 import OAuthSuccess from './pages/auth/OAuthSuccess';
 
@@ -131,6 +132,9 @@ function App() {
           <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/complete-profile" element={
             <ProtectedRoute allowedRoles={['student']}><CompleteProfile /></ProtectedRoute>
+          } />
+          <Route path="/set-password" element={
+            <ProtectedRoute allowedRoles={['student']}><SetPassword /></ProtectedRoute>
           } />
 
 

@@ -5,9 +5,20 @@ const User = require('../models/User.model');
 // Get available students for assignment (not already in a room)
 exports.getAvailableStudents = async (req, res) => {
   try {
-    const students = await User.find({ 
+    // A profile field must not determine room availability. A student is
+    // unavailable only after an actual room allocation or approved booking.
+    const [approvedBookingStudentIds, assignedOccupantIds] = await Promise.all([
+      Booking.distinct('student', { status: 'approved' }),
+      Room.distinct('occupants')
+    ]);
+    const assignedStudentIds = [...new Set([
+      ...approvedBookingStudentIds.map(String),
+      ...assignedOccupantIds.map(String)
+    ])];
+
+    const students = await User.find({
       role: 'student',
-      roomNumber: { $in: ['', null] }
+      _id: { $nin: assignedStudentIds }
     }, 'name studentId email').sort({ name: 1 });
     res.json(students);
   } catch (err) {

@@ -76,6 +76,13 @@ const StudentDashboard = () => {
 
       <ErrorBanner message={error} />
 
+      {user?.authProvider === 'google' && (
+        <div className="mb-6 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+          Prefer email and password sign-in?{' '}
+          <Link to="/set-password" className="font-semibold underline">Set a password</Link>.
+        </div>
+      )}
+
       {loading ? <Loader /> : summary && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
