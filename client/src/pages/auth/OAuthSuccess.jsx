@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import Loader from '../../components/common/Loader';
 
 const ROLE_REDIRECTS = { student: '/student', warden: '/warden', admin: '/admin' };
+const FRONTEND_ORIGIN = process.env.REACT_APP_FRONTEND_ORIGIN;
 
 const OAuthSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -21,12 +22,12 @@ const OAuthSuccess = () => {
       if (token) {
         window.opener.postMessage(
           { type: 'HOSTELOS_GOOGLE_OAUTH', token },
-          window.location.origin
+          FRONTEND_ORIGIN
         );
       } else {
         window.opener.postMessage(
           { type: 'HOSTELOS_GOOGLE_OAUTH', error: error || 'Google sign-in failed' },
-          window.location.origin
+          FRONTEND_ORIGIN
         );
       }
       window.close();
